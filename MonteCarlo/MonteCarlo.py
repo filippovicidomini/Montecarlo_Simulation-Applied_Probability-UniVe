@@ -103,7 +103,7 @@ class PiEstimation(Scene):
         self.play(Write(pi_formula_final.move_to(ORIGIN).scale(2)))
         
         
-        self.wait(2)
+        self.wait(3)
         
 class MonteCarlo(Scene):
     def construct(self):
