@@ -24,6 +24,10 @@ class FinalVideo(Scene): # HERE PUT ALL THE SCENE TOGETHER calling scene.constru
         self.wait(2)
         MonteCarlo.construct(self)
 
+class TitolidiCoda(Scene):
+    def construct(self):
+        pass
+
 class PiEstimation(Scene): # DONE
     def construct(self):
         # Title
@@ -117,27 +121,30 @@ class PiEstimation(Scene): # DONE
         
 class MonteCarlo(Scene):
     def construct(self):
-        # Create the square
-        square = Square(side_length=4, color=BLUE)
-        square.move_to(ORIGIN)
-        self.play(Create(square))
+        # Create the square and circle
+        square = Square(side_length=4, color=BLUE).move_to(ORIGIN)
+        circle = Circle(radius=2, color=RED, fill_opacity=0.9, stroke_width=1).move_to(ORIGIN)
+        self.play(Create(square), Create(circle))
 
-        # Create the circle
-        circle = Circle(radius=2, color=RED, fill_opacity=0.5, stroke_width=1)
-        circle.move_to(ORIGIN)
-        self.play(Create(circle))
-
-        # Initialize the display for pi value and total point count
+        # Initialize display for π approximation and point count
         pi_text = Text("π ≈ 0", font_size=36).to_edge(UP)
-        self.play(Write(pi_text))
-
         count_text = Text("Points: 0", font_size=36).next_to(pi_text, DOWN)
-        self.play(Write(count_text))
+        self.play(Write(pi_text), Write(count_text))
 
-        # Create the points and update the pi value and point count dynamically
+        # Display the coordinates of the point on the left of the square
+        point_text = Text("Point: (0, 0)", font_size=28).next_to(square, LEFT, buff=0.5)
+        self.play(Write(point_text))
+
+        # Display the effective distance on the right of the square
+        distance_text = Text("Distance: 0.00", font_size=28).next_to(square, RIGHT, buff=0.5)
+        self.play(Write(distance_text))
+
+        # Variables for points and counters
         points = []
-        n_inside = 0
-        total_points = 30 # number of points to generate
+        n_inside = 0  
+        total_points = 10  # Total number of points to display
+        slow_phase_points = 5  # Number of points in the slow phase
+        base_run_time = 0.2     # Initial run time for the slow phase
 
         for i in range(total_points):
             # Generate a random point in the square
@@ -145,25 +152,231 @@ class MonteCarlo(Scene):
             y = np.random.uniform(-2, 2)
             point = Dot(point=[x, y, 0], color=WHITE, radius=0.05)
             points.append(point)
-            self.play(Create(point), run_time=0.01)
+            
+            # Set animation speed: slow for the first phase, then exponential
+            if i < slow_phase_points:
+                current_run_time = base_run_time
+            else:
+                current_run_time = base_run_time * (0.85 ** (i - slow_phase_points))  # Slightly less aggressive exponential decay
+            
+            # Animate the point creation
+            self.play(Create(point), run_time=current_run_time)
+
+            # Update point coordinates text dynamically
+            new_point_text = Text(f"Point: ({x:.2f}, {y:.2f})", font_size=28).next_to(square, LEFT, buff=0.5)
+            self.play(Transform(point_text, new_point_text), run_time=current_run_time)
+
+            # Calculate distance from the origin to the point
+            distance = np.sqrt(x**2 + y**2)
+            new_distance_text = Text(f"Distance: {distance:.2f}", font_size=28).next_to(square, RIGHT, buff=0.5)
+            self.play(Transform(distance_text, new_distance_text), run_time=current_run_time)
+
+            # Determine color of vector based on point's location (inside or outside the circle)
+            vector_color = GREEN if distance <= 2 else RED
+            vector = Arrow(start=ORIGIN, end=[x, y, 0], buff=0, color=vector_color, stroke_width=2)
+            self.play(Create(vector), run_time=current_run_time)
 
             # Check if the point is inside the circle
-            
-            if np.sqrt(x**2 + y**2) <= 2:
+            inside_circle = distance <= 2
+            if inside_circle:
                 n_inside += 1
 
-            # Calculate and update the value of pi
-            pi_value = 4 * n_inside / len(points)
+            # Update the approximation of pi
+            pi_value = 4 * n_inside / (i + 1)
             new_pi_text = Text(f"π ≈ {pi_value:.4f}", font_size=36).to_edge(UP)
+            new_count_text = Text(f"Points: {i + 1}", font_size=36).next_to(new_pi_text, DOWN)
+            self.play(Transform(pi_text, new_pi_text), Transform(count_text, new_count_text), run_time=current_run_time)
 
-            # Update the total point count
-            new_count_text = Text(f"Points: {i+1}", font_size=36).next_to(new_pi_text, DOWN)
+            # Show a check explanation for the first point
+            if i == 0:
+                # LaTeX version of the check explanation
+                check_text = MathTex(
+                    r"\text{Checking if } (x, y) \text{ is inside the circle:}",
+                    r"\text{ Distance} = \sqrt{x^2 + y^2}",
+                    r"\text{ Inside circle? Distance} \leq 2", 
+                    font_size=24
+                ).to_edge(DOWN)
+                self.play(Write(check_text))
+                self.wait(1)
+                self.play(FadeOut(check_text))
 
-            # Replace the old pi value and count with the updated ones
+            # Remove vector after each point to avoid clutter
+            self.play(FadeOut(vector), run_time=current_run_time)
+
+            # Pause after the slow phase for visual contrast
+            if i == slow_phase_points - 1:
+                self.wait(.1)
+                
+        slow_phase_points = total_points
+        current_total = slow_phase_points
+        
+        # Fast phase: Add multiple points per batch without the arrow
+        self.wait(.1)  # Pause before fast phase for contrast
+        
+        
+        ##############################################
+        total_points += 100  # Define a large number of points for the fast phase
+        batch_size = 10  # Number of points per batch in the fast phase
+        # remove all the previous points
+        self.play(FadeOut(Group(*points)), FadeOut(point_text), FadeOut(distance_text))
+        for i in range(slow_phase_points, total_points, batch_size):
+            self.play(FadeOut(Group(*points)), run_time=0.1, lag_ratio=0.9)
+            new_points = []
+            
+            n_inside_ = 0
+            for _ in range(batch_size):
+                
+                x = np.random.uniform(-2, 2)
+                y = np.random.uniform(-2, 2)
+                point = Dot(point=[x, y, 0], color=WHITE, radius=0.05)
+                new_points.append(point)
+                if np.sqrt(x**2 + y**2) <= 2:
+                    n_inside_ += 1
+
+            # Display the batch of points at once
+            self.play(*[Create(p) for p in new_points], run_time=0.1, lag_ratio=0.9)
+            points = new_points
+
+            # Update π approximation and total count
+            current_total += batch_size
+            n_inside += n_inside_
+            pi_value = 4 * n_inside / current_total
+            new_pi_text = Text(f"π ≈ {pi_value:.5f}", font_size=36).to_edge(UP)
+            new_count_text = Text(f"Points: {current_total}", font_size=36).next_to(new_pi_text, DOWN)
             self.play(Transform(pi_text, new_pi_text), Transform(count_text, new_count_text), run_time=0.1)
+            
 
+        # Fade out all elements at the end
+        self.wait(.1)
+        #self.play(FadeOut(Group(*points)), run_time=0.1)
+        #self.play(FadeOut(square), FadeOut(circle), FadeOut(pi_text), FadeOut(count_text), FadeOut(point_text), FadeOut(distance_text))
+        
+        #########################################
+        ##########################################
+        ##############################################
+        current_total = total_points
+        total_points += 100  # Define a large number of points for the fast phase
+        batch_size = 10  # Number of points per batch in the fast phase
+        # remove all the previous points
+        #self.play(FadeOut(Group(*points)), FadeOut(point_text), FadeOut(distance_text))
+        for i in range(slow_phase_points, total_points, batch_size):
+            self.play(FadeOut(Group(*points)), run_time=0.1, lag_ratio=0.9) 
+            new_points = []
+            
+            n_inside_ = 0
+            for _ in range(batch_size):
+                
+                x = np.random.uniform(-2, 2)
+                y = np.random.uniform(-2, 2)
+                point = Dot(point=[x, y, 0], color=WHITE, radius=0.05)
+                new_points.append(point)
+                if np.sqrt(x**2 + y**2) <= 2:
+                    n_inside_ += 1
+
+            # Display the batch of points at once
+            self.play(*[Create(p) for p in new_points], run_time=0.1)
+            points = new_points
+
+            # Update π approximation and total count
+            current_total += batch_size
+            n_inside += n_inside_
+            pi_value = 4 * n_inside / current_total
+            new_pi_text = Text(f"π ≈ {pi_value:.5f}", font_size=36).to_edge(UP)
+            new_count_text = Text(f"Points: {current_total}", font_size=36).next_to(new_pi_text, DOWN)
+            self.play(Transform(pi_text, new_pi_text), Transform(count_text, new_count_text), run_time=0.1, lag_ratio=0.5)
+            
+
+        # Fade out all elements at the end
+        self.wait(.1)
+        #xself.play(FadeOut(Group(*points)), run_time=0.1)
+        #self.play(FadeOut(square), FadeOut(circle),  FadeOut(point_text), FadeOut(distance_text))
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        #########################################
+        ##########################################
+        #########################################
+        ##########################################
+        ##############################################
+        current_total = total_points
+        total_points += 1000  # Define a large number of points for the fast phase
+        batch_size = 100  # Number of points per batch in the fast phase
+        # remove all the previous points
+        #self.play(FadeOut(Group(*points)))
+        self.play(FadeOut(Group(*points)), run_time=0.1, lag_ratio=0.9) 
+        self.play(FadeOut(circle), FadeOut(square))
+        # move the pi text and the count text on the origin 
+        new_pi_text = Text(f"π ≈ {pi_value:.5f}", font_size=36).to_edge(ORIGIN)
+        new_count_text = Text(f"Points: {current_total}", font_size=36).next_to(new_pi_text, DOWN)  
+        
+        for i in range(slow_phase_points, total_points, batch_size):
+            #self.play(FadeOut(Group(*points)), run_time=0.1, lag_ratio=0.1) 
+            new_points = []
+            
+            n_inside_ = 0
+            for _ in range(batch_size):
+                
+                x = np.random.uniform(-2, 2)
+                y = np.random.uniform(-2, 2)
+                #point = Dot(point=[x, y, 0], color=WHITE, radius=0.05)
+                #new_points.append(point)
+                if np.sqrt(x**2 + y**2) <= 2:
+                    n_inside_ += 1
+
+            # Display the batch of points at once
+            #self.play(*[Create(p) for p in new_points], run_time=0.1)
+            points = new_points
+
+            # Update π approximation and total count
+            current_total += batch_size
+            n_inside += n_inside_
+            pi_value = 4 * n_inside / current_total
+            new_pi_text = Text(f"π ≈ {pi_value:.8f}", font_size=36).to_edge(ORIGIN).scale(2)
+            new_count_text = Text(f"Points: {current_total}", font_size=36).next_to(new_pi_text, DOWN)
+            # self.play(FadeOut(*points), run_time=0.1)
+            self.play(Transform(pi_text, new_pi_text), Transform(count_text, new_count_text), run_time=1, lag_ratio=0.2)
+            
+
+        # Fade out all elements at the end
         self.wait(2)
-        self.play(FadeOut(square), FadeOut(circle))
-        self.wait(1)
-        self.play(FadeOut(Group(*points)))
-        self.wait(1)
+        #self.play(FadeOut(Group(*points)), run_time=0.1)
+        #self.play(FadeOut(square), FadeOut(circle), FadeOut(pi_text), FadeOut(count_text), FadeOut(point_text), FadeOut(distance_text))
+        self.play(FadeOut(pi_text), FadeOut(count_text))
+        #########################################
+        ##########################################
+        
+        # now
+        
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+
+        # now
+        
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
