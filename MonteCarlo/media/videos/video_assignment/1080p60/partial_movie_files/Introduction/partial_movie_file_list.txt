@@ -1,0 +1,7 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/filippovicidomini/Desktop/Applied Probability/montecarlo_presentation/MonteCarlo/media/videos/video_assignment/1080p60/partial_movie_files/Introduction/3977891868_622469365_223132457.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Applied Probability/montecarlo_presentation/MonteCarlo/media/videos/video_assignment/1080p60/partial_movie_files/Introduction/2852726489_1704852926_3161768797.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Applied Probability/montecarlo_presentation/MonteCarlo/media/videos/video_assignment/1080p60/partial_movie_files/Introduction/2852726489_348307083_28097830.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Applied Probability/montecarlo_presentation/MonteCarlo/media/videos/video_assignment/1080p60/partial_movie_files/Introduction/2852726489_3319194702_4041879708.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Applied Probability/montecarlo_presentation/MonteCarlo/media/videos/video_assignment/1080p60/partial_movie_files/Introduction/2852726489_1704852926_3962284389.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Applied Probability/montecarlo_presentation/MonteCarlo/media/videos/video_assignment/1080p60/partial_movie_files/Introduction/2852726489_4267083292_1891970798.mp4'
