@@ -18,7 +18,7 @@ import numpy as np
 
 from manim import *
 
-class PiEstimation(Scene):
+class PiEstimation(Scene): # DONE
     def construct(self):
         # Title
         title = Text("Estimating Pi with MonteCarlo Simulation").to_edge(ORIGIN)
