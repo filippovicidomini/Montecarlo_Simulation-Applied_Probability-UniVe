@@ -63,7 +63,7 @@ class PiEstimation(Scene): # DONE
         formula_position = 1 * DOWN + 3.5 * LEFT
         ratio_formula_1 = MathTex(r"\frac{A_C}{A_S} = \frac{\pi r^2}{4r^2}", font_size=72).move_to(formula_position)
         ratio_formula_2 = MathTex(r"\frac{A_C}{A_S} = \frac{\pi}{4}", font_size=72).move_to(formula_position)
-        pi_formula_final = MathTex(r"\pi = \frac{4 A_C}{A_S}", font_size=72).move_to(formula_position)
+        pi_formula_final = MathTex(r"\pi = \frac{4 \cdot A_C}{A_S}", font_size=72).move_to(formula_position)
         
         # Apply colors using indexing and slicing for ratio formulas
         ratio_formula_1[0][0:2].set_color(YELLOW)   # A_C in yellow
@@ -77,8 +77,8 @@ class PiEstimation(Scene): # DONE
         ratio_formula_2[0][6:7].set_color(RED)      # \pi in red
         
         pi_formula_final[0][0:1].set_color(RED)   # A_C in yellow
-        pi_formula_final[0][3:5].set_color(YELLOW)    # A_S in green
-        pi_formula_final[0][6:8].set_color(GREEN)      # \pi in red
+        pi_formula_final[0][4:6].set_color(YELLOW)    # A_S in green
+        pi_formula_final[0][8:9].set_color(GREEN)      # \pi in red
 
         # Animations
         self.play(Create(shapes), run_time=2)
@@ -108,6 +108,7 @@ class PiEstimation(Scene): # DONE
         self.play(FadeOut(ratio_formula_1), run_time=1)
         self.play(Write(pi_formula_final.move_to(ORIGIN).scale(2)))
         
+        self.wait(2)
         # clean up
         
         self.play(FadeOut(pi_formula_final), FadeOut(title))
