@@ -18,6 +18,12 @@ import numpy as np
 
 from manim import *
 
+class FinalVideo(Scene): # HERE PUT ALL THE SCENE TOGETHER calling scene.construct(self)
+    def construct(self):
+        PiEstimation.construct(self)
+        self.wait(2)
+        MonteCarlo.construct(self)
+
 class PiEstimation(Scene): # DONE
     def construct(self):
         # Title
@@ -102,8 +108,11 @@ class PiEstimation(Scene): # DONE
         self.play(FadeOut(ratio_formula_1), run_time=1)
         self.play(Write(pi_formula_final.move_to(ORIGIN).scale(2)))
         
+        # clean up
         
-        self.wait(3)
+        self.play(FadeOut(pi_formula_final), FadeOut(title))
+        
+        self.wait(1)
         
 class MonteCarlo(Scene):
     def construct(self):

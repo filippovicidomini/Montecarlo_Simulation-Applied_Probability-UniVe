@@ -12,7 +12,7 @@ from manim import *
 #config.frame_rate = 30
 #config.tex_template = TexTemplateLibrary.simple
 
-class FinalVideo(Scene):
+class FinalVideo_(Scene):
     """In this class we'll create the final video with all the sections combined.
      # how to use it:
      once you created a class for a part of the video, you can add it to the final video with the following code:
