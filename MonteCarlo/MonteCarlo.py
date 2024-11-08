@@ -115,134 +115,105 @@ class PiEstimation(Scene): # DONE
         
         self.wait(1)
         
-class MonteCarlo(Scene): # DONE
+class MonteCarlo(Scene):
     def construct(self):
-        # Create the square and circle
+        # Creazione del quadrato e del cerchio
         square = Square(side_length=4, color=XKCD.BABYPURPLE).move_to(ORIGIN)
         circle = Circle(radius=2, color=XKCD.AZUL, fill_opacity=0.9, stroke_width=1).move_to(ORIGIN)
         self.play(Create(square), Create(circle))
 
-        # Initialize display for π approximation and point count
+        # Inizializzazione della visualizzazione per l'approssimazione di π e conteggio punti
         pi_text = Text("π ≈ 0", font_size=36).to_edge(UP)
         count_text = Text("Points: 0", font_size=36).next_to(pi_text, DOWN)
         self.play(Write(pi_text), Write(count_text))
 
-        # Display the coordinates of the point on the left of the square
+        # Testo per le coordinate del punto a sinistra del quadrato
         point_text = Text("Point: (0, 0)", font_size=28).next_to(square, LEFT, buff=0.5)
         self.play(Write(point_text))
 
-        # Display the effective distance on the right of the square
+        # Testo per la distanza effettiva a destra del quadrato
         distance_text = Text("Distance: 0.00", font_size=28).next_to(square, RIGHT, buff=0.5)
         self.play(Write(distance_text))
 
-        # Variables for points and counters
+        # Variabili per i punti e i contatori
         points = []
         n_inside = 0  
-        total_points = 100  # Total number of points to display
-        slow_phase_points = 10  # Number of points in the slow phase
-        base_run_time = 0.2     # Initial run time for the slow phase
+        total_points = 100  # Numero totale di punti da visualizzare
+        slow_phase_points = 10  # Numero di punti nella fase lenta
+        base_run_time = 0.2     # Tempo di esecuzione iniziale per la fase lenta
 
+        # Fase lenta per animare i singoli punti
         for i in range(total_points):
-            # Generate a random point in the square
-            x = np.random.uniform(-2, 2)
-            y = np.random.uniform(-2, 2)
+            # Genera un punto casuale nel quadrato
+            x, y = np.random.uniform(-2, 2), np.random.uniform(-2, 2)
             point = Dot(point=[x, y, 0], color=WHITE, radius=0.05)
             points.append(point)
             
-            # Set animation speed: slow for the first phase, then exponential
-            if i < slow_phase_points:
-                current_run_time = base_run_time
-            else:
-                current_run_time = base_run_time * (0.85 ** (i - slow_phase_points))  # Slightly less aggressive exponential decay
+            # Imposta la velocità di animazione: lenta per i primi punti, poi esponenziale
+            current_run_time = base_run_time if i < slow_phase_points else base_run_time * (0.85 ** (i - slow_phase_points))
             
-            # Animate the point creation
+            # Anima la creazione del punto
             self.play(Create(point), run_time=current_run_time)
 
-            # Update point coordinates text dynamically
+            # Aggiorna le coordinate del punto
             new_point_text = Text(f"Point: ({x:.2f}, {y:.2f})", font_size=28).next_to(square, LEFT, buff=0.5)
             self.play(Transform(point_text, new_point_text), run_time=current_run_time)
 
-            # Calculate distance from the origin to the point
+            # Calcola la distanza dall'origine
             distance = np.sqrt(x**2 + y**2)
             new_distance_text = Text(f"Distance: {distance:.2f}", font_size=28).next_to(square, RIGHT, buff=0.5)
             self.play(Transform(distance_text, new_distance_text), run_time=current_run_time)
 
-            # Determine color of vector based on point's location (inside or outside the circle)
+            # Determina il colore del vettore basato sulla posizione del punto (dentro o fuori dal cerchio)
             vector_color = XKCD.BRIGHTYELLOW if distance <= 2 else XKCD.BLOODRED
             vector = Arrow(start=ORIGIN, end=[x, y, 0], buff=0.1, color=vector_color, stroke_width=3)
             self.play(Create(vector), run_time=current_run_time)
 
-            # Check if the point is inside the circle
-            inside_circle = distance <= 2
-            if inside_circle:
+            # Verifica se il punto è dentro il cerchio
+            if distance <= 2:
                 n_inside += 1
 
-            # Update the approximation of pi
+            # Aggiorna l'approssimazione di pi
             pi_value = 4 * n_inside / (i + 1)
             new_pi_text = Text(f"π ≈ {pi_value:.4f}", font_size=36).to_edge(UP)
             new_count_text = Text(f"Points: {i + 1}", font_size=36).next_to(new_pi_text, DOWN)
             self.play(Transform(pi_text, new_pi_text), Transform(count_text, new_count_text), run_time=current_run_time)
 
-            # Show a check explanation for the first point
-            if i == 0:
-                # LaTeX version of the check explanation
-                check_text = MathTex(
-                    r"\text{Checking if } (x, y) \text{ is inside the circle:}",
-                    r"\text{ Distance} = \sqrt{x^2 + y^2}",
-                    r"\text{ Inside circle? Distance} \leq 2", 
-                    font_size=24
-                ).to_edge(DOWN)
-                self.play(Write(check_text))
-                self.wait(1)
-                self.play(FadeOut(check_text))
-
-            # Remove vector after each point to avoid clutter
+            # Rimuovi il vettore dopo ogni punto per evitare disordine
             self.play(FadeOut(vector), run_time=current_run_time)
 
-            # Pause after the slow phase for visual contrast
-            if i == slow_phase_points - 1:
-                pass
-                #self.wait(.1)
-                
-        slow_phase_points = total_points
-        current_total = slow_phase_points
+        # Fase rapida: aggiunta di punti multipli per batch senza il vettore
+        self.wait(.3)  # Pausa prima della fase rapida per il contrasto
         
-        # Fast phase: Add multiple points per batch without the arrow
-        self.wait(.1)  # Pause before fast phase for contrast
-        
-        
-        ##############################################
-        total_points += 200  # Define a large number of points for the fast phase
-        batch_size = 10  # Number of points per batch in the fast phase
-        # remove all the previous points
+        total_points += 200  # Definisci un numero elevato di punti per la fase rapida
+        batch_size = 10  # Numero di punti per batch nella fase rapida
         self.play(FadeOut(point_text), FadeOut(distance_text), run_time=0.5)
+        
         for i in range(slow_phase_points, total_points, batch_size):
-            self.play(FadeOut(Group(*points)), run_time=0.1, lag_ratio=0.9)
             new_points = []
-            
             n_inside_ = 0
             for _ in range(batch_size):
-                
-                x = np.random.uniform(-2, 2)
-                y = np.random.uniform(-2, 2)
+                x, y = np.random.uniform(-2, 2), np.random.uniform(-2, 2)
                 point = Dot(point=[x, y, 0], color=WHITE, radius=0.05)
                 new_points.append(point)
                 if np.sqrt(x**2 + y**2) <= 2:
                     n_inside_ += 1
 
-            # Display the batch of points at once
-            self.play(*[Create(p) for p in new_points], run_time=0.1, lag_ratio=0.9)
+            # Visualizza il batch di punti contemporaneamente
+            self.play(*[Create(p) for p in new_points], run_time=0.1)
             points = new_points
 
-            # Update π approximation and total count
-            current_total += batch_size
+            # Aggiorna l'approssimazione di π e il conteggio totale
+            current_total = i + batch_size
             n_inside += n_inside_
             pi_value = 4 * n_inside / current_total
             new_pi_text = Text(f"π ≈ {pi_value:.5f}", font_size=36).to_edge(UP)
             new_count_text = Text(f"Points: {current_total}", font_size=36).next_to(new_pi_text, DOWN)
             self.play(Transform(pi_text, new_pi_text), Transform(count_text, new_count_text), run_time=0.1)
             
-
+        # Dissolvi tutti gli elementi al termine
+        self.wait(2)
+        self.play(FadeOut(square), FadeOut(circle), FadeOut(pi_text), FadeOut(count_text), FadeOut(Group(*points)))
         # Fade out all elements at the end
         #self.wait(.1)
         #self.play(FadeOut(Group(*points)), run_time=0.1)
@@ -350,23 +321,6 @@ class MonteCarlo(Scene): # DONE
         
         # now
         
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-
-        # now
-
-from manim import *
-
 class Credits(Scene):
     def construct(self):
         # Display "Created by:" at the top
@@ -388,3 +342,113 @@ class Credits(Scene):
         # Fade out all elements
         self.wait(2)
         self.play(FadeOut(created_by_text), FadeOut(names_text), FadeOut(university_text))
+        
+
+
+
+from manim import *
+import numpy as np
+class MonteCarloIntegral(Scene):
+    def construct(self):
+        # Define the function and interval for integration
+        a, b = -2, 2  # Interval [a, b]
+        func = lambda x: x**2  # Function to integrate: f(x) = x^2
+        max_y = func(b)  # Max value for bounding box
+
+        # Set up the Cartesian plane for the function
+        plane = Axes(
+            x_range=[a - 1, b + 1, 1],
+            y_range=[0, max_y + 1, 1],
+            x_length=6,
+            y_length=4,
+            axis_config={"color": GREY},
+            x_axis_config={"include_numbers": True},
+            y_axis_config={"include_numbers": True}
+        ).shift(RIGHT * 2.6)
+
+        # Label axes
+        x_label = plane.get_x_axis_label("x")
+        y_label = plane.get_y_axis_label("f(x)")
+        self.play(Create(plane), Write(x_label), Write(y_label))
+
+        # Draw the function curve
+        graph = plane.plot(func, x_range=[a, b], color=PURE_BLUE)
+        self.play(Create(graph))
+
+        # Create second plane (plane2) for the approximation graph
+        plane2 = Axes(
+            x_range=[0, 10, 10],  # Number of points on x-axis
+            y_range=[0, 10, 1],  # Integral approximation values on y-axis
+            x_length=5,
+            y_length=3,
+            axis_config={"color": GREY},
+            x_axis_config={"include_numbers": True},
+            y_axis_config={"include_numbers": True}
+        ).shift(LEFT * 3)  # Position it to the left of the first plane
+
+        # Label axes for plane2
+        x_label2 = plane2.get_x_axis_label("Points")
+        y_label2 = plane2.get_y_axis_label("Integral Approximation")
+        self.play(Create(plane2), Write(x_label2), Write(y_label2))
+
+        # Create the initial line for the integral approximation using plot_line_graph
+        integral_approximations = []  # To store the approximations
+        integral_approximations.append(0)  # Start with an initial approximation of 0
+        integral_approximation_graph = plane2.plot_line_graph(
+            x_values=np.array([0]),  # Initial x value (0 points)
+            y_values=np.array([0]),  # Initial y value (approximation = 0)
+            line_color=YELLOW
+        )
+        self.play(Create(integral_approximation_graph))
+
+        # Centered text elements for approximation display
+        #integral_text = Text("Approx. Integral ≈ 0", font_size=36).to_edge(LEFT*1.3)
+        #count_text = Text("Points: 0", font_size=30).next_to(integral_text, DOWN)
+        #self.play(Write(integral_text), Write(count_text))
+
+        # Variables for points and counters
+        points = []
+        n_under_curve = 0  
+        total_points = 10  # Total number of points to display
+        slow_phase_points = 10  # Points in slow phase
+        base_run_time = 0.2     # Initial speed for slow phase
+
+        # Monte Carlo sampling animation
+        for i in range(total_points):
+            # Generate a random point in the bounding box
+            x = np.random.uniform(a, b)
+            y = np.random.uniform(0, max_y)
+            point = Dot(point=plane.coords_to_point(x, y), radius=0.05)
+
+            # Determine if the point is under the curve
+            if y <= func(x):
+                point.set_color(PURE_BLUE)
+                n_under_curve += 1
+            else:
+                point.set_color(ORANGE)
+            points.append(point)
+            
+            # Animation speed: slow for first phase, then quicker
+            current_run_time = base_run_time if i < slow_phase_points else base_run_time * (0.85 ** (i - slow_phase_points))
+            self.play(Create(point), run_time=current_run_time)
+
+            # Update integral approximation
+            #approx_integral = (b - a) * max_y * (n_under_curve / (i + 1))
+            #integral_approximations.append(approx_integral)
+
+            # Update the graph for integral approximation using plot_line_graph
+            integral_approximation_graph = plane2.plot_line_graph(
+                x_values=np.arange(i + 1),
+                y_values=np.array(integral_approximations),
+                line_color=YELLOW
+            )
+            self.play(Transform(integral_approximation_graph, integral_approximation_graph), run_time=current_run_time)
+
+            # Update integral value text
+            #new_integral_text = Text(f"Approx. Integral ≈ {approx_integral:.4f}", font_size=36).move_to(integral_text)
+            #new_count_text = Text(f"Points: {i + 1}", font_size=30).next_to(new_integral_text, DOWN)
+            #self.play(Transform(integral_text, new_integral_text), Transform(count_text, new_count_text), run_time=current_run_time)
+
+        # Show final approximation briefly and fade out elements
+        self.wait(2)
+        self.play(FadeOut(VGroup(*points), graph, plane, x_label, y_label, plane2, x_label2, y_label2))
