@@ -24,10 +24,6 @@ class FinalVideo(Scene): # HERE PUT ALL THE SCENE TOGETHER calling scene.constru
         self.wait(2)
         MonteCarlo.construct(self)
 
-class TitolidiCoda(Scene):
-    def construct(self):
-        pass
-
 class PiEstimation(Scene): # DONE
     def construct(self):
         # Title
@@ -119,7 +115,7 @@ class PiEstimation(Scene): # DONE
         
         self.wait(1)
         
-class MonteCarlo(Scene):
+class MonteCarlo(Scene): # DONE
     def construct(self):
         # Create the square and circle
         square = Square(side_length=4, color=XKCD.BABYPURPLE).move_to(ORIGIN)
@@ -368,16 +364,27 @@ class MonteCarlo(Scene):
        
 
         # now
+
+from manim import *
+
+class Credits(Scene):
+    def construct(self):
+        # Display "Created by:" at the top
+        created_by_text = Text("Created by:", font_size=36)
+        created_by_text.to_edge(UP)
+        self.play(Write(created_by_text))
         
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
-       
+        # Display the names in a list at the center
+        names = ["Filippo Vicidomini", "Nome 2", "Nome 3", "Nome 4"]
+        names_text = VGroup(*[Text(name, font_size=40) for name in names])
+        names_text.arrange(DOWN, center=True)
+        self.play(Write(names_text, shift=UP))
+
+        # Display "University Ca' Foscari of Venice" at the bottom
+        university_text = Text("University Ca' Foscari of Venice", font_size=36)
+        university_text.to_edge(DOWN)
+        self.play(Write(university_text))
+
+        # Fade out all elements
+        self.wait(2)
+        self.play(FadeOut(created_by_text), FadeOut(names_text), FadeOut(university_text))
