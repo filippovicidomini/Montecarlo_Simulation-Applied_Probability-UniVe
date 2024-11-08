@@ -122,8 +122,8 @@ class PiEstimation(Scene): # DONE
 class MonteCarlo(Scene):
     def construct(self):
         # Create the square and circle
-        square = Square(side_length=4, color=BLUE).move_to(ORIGIN)
-        circle = Circle(radius=2, color=RED, fill_opacity=0.9, stroke_width=1).move_to(ORIGIN)
+        square = Square(side_length=4, color=XKCD.BABYPURPLE).move_to(ORIGIN)
+        circle = Circle(radius=2, color=XKCD.AZUL, fill_opacity=0.9, stroke_width=1).move_to(ORIGIN)
         self.play(Create(square), Create(circle))
 
         # Initialize display for π approximation and point count
@@ -142,8 +142,8 @@ class MonteCarlo(Scene):
         # Variables for points and counters
         points = []
         n_inside = 0  
-        total_points = 10  # Total number of points to display
-        slow_phase_points = 5  # Number of points in the slow phase
+        total_points = 100  # Total number of points to display
+        slow_phase_points = 10  # Number of points in the slow phase
         base_run_time = 0.2     # Initial run time for the slow phase
 
         for i in range(total_points):
@@ -172,8 +172,8 @@ class MonteCarlo(Scene):
             self.play(Transform(distance_text, new_distance_text), run_time=current_run_time)
 
             # Determine color of vector based on point's location (inside or outside the circle)
-            vector_color = GREEN if distance <= 2 else RED
-            vector = Arrow(start=ORIGIN, end=[x, y, 0], buff=0, color=vector_color, stroke_width=2)
+            vector_color = XKCD.BRIGHTYELLOW if distance <= 2 else XKCD.BLOODRED
+            vector = Arrow(start=ORIGIN, end=[x, y, 0], buff=0.1, color=vector_color, stroke_width=3)
             self.play(Create(vector), run_time=current_run_time)
 
             # Check if the point is inside the circle
@@ -205,7 +205,8 @@ class MonteCarlo(Scene):
 
             # Pause after the slow phase for visual contrast
             if i == slow_phase_points - 1:
-                self.wait(.1)
+                pass
+                #self.wait(.1)
                 
         slow_phase_points = total_points
         current_total = slow_phase_points
@@ -215,10 +216,10 @@ class MonteCarlo(Scene):
         
         
         ##############################################
-        total_points += 100  # Define a large number of points for the fast phase
+        total_points += 200  # Define a large number of points for the fast phase
         batch_size = 10  # Number of points per batch in the fast phase
         # remove all the previous points
-        self.play(FadeOut(Group(*points)), FadeOut(point_text), FadeOut(distance_text))
+        self.play(FadeOut(point_text), FadeOut(distance_text), run_time=0.5)
         for i in range(slow_phase_points, total_points, batch_size):
             self.play(FadeOut(Group(*points)), run_time=0.1, lag_ratio=0.9)
             new_points = []
@@ -247,7 +248,7 @@ class MonteCarlo(Scene):
             
 
         # Fade out all elements at the end
-        self.wait(.1)
+        #self.wait(.1)
         #self.play(FadeOut(Group(*points)), run_time=0.1)
         #self.play(FadeOut(square), FadeOut(circle), FadeOut(pi_text), FadeOut(count_text), FadeOut(point_text), FadeOut(distance_text))
         
@@ -255,8 +256,8 @@ class MonteCarlo(Scene):
         ##########################################
         ##############################################
         current_total = total_points
-        total_points += 100  # Define a large number of points for the fast phase
-        batch_size = 10  # Number of points per batch in the fast phase
+        total_points += 2000  # Define a large number of points for the fast phase
+        batch_size = 100  # Number of points per batch in the fast phase
         # remove all the previous points
         #self.play(FadeOut(Group(*points)), FadeOut(point_text), FadeOut(distance_text))
         for i in range(slow_phase_points, total_points, batch_size):
@@ -283,34 +284,34 @@ class MonteCarlo(Scene):
             pi_value = 4 * n_inside / current_total
             new_pi_text = Text(f"π ≈ {pi_value:.5f}", font_size=36).to_edge(UP)
             new_count_text = Text(f"Points: {current_total}", font_size=36).next_to(new_pi_text, DOWN)
-            self.play(Transform(pi_text, new_pi_text), Transform(count_text, new_count_text), run_time=0.1, lag_ratio=0.5)
+            self.play(Transform(pi_text, new_pi_text), Transform(count_text, new_count_text), run_time=0.1, lag_ratio=0.1)
             
 
         # Fade out all elements at the end
-        self.wait(.1)
+        #self.wait(.1)
         #xself.play(FadeOut(Group(*points)), run_time=0.1)
         #self.play(FadeOut(square), FadeOut(circle),  FadeOut(point_text), FadeOut(distance_text))
         
         
-        
-        
-        
-        
-        
-        
-        
+
         #########################################
         ##########################################
         #########################################
         ##########################################
         ##############################################
         current_total = total_points
-        total_points += 1000  # Define a large number of points for the fast phase
-        batch_size = 100  # Number of points per batch in the fast phase
+        total_points += 10000000  # Define a large number of points for the fast phase
+        batch_size = 50000  # Number of points per batch in the fast phase
         # remove all the previous points
         #self.play(FadeOut(Group(*points)))
-        self.play(FadeOut(Group(*points)), run_time=0.1, lag_ratio=0.9) 
+        self.play(FadeOut(Group(*points)), run_time=0.1, lag_ratio=0.4) 
         self.play(FadeOut(circle), FadeOut(square))
+        self.play(pi_text.animate.move_to(ORIGIN).scale(2), run_time=1)
+        self.play(count_text.animate.move_to(ORIGIN+DOWN).scale(1), run_time=1)
+        # animate pi text and count text in sync
+        
+        
+        
         # move the pi text and the count text on the origin 
         new_pi_text = Text(f"π ≈ {pi_value:.5f}", font_size=36).to_edge(ORIGIN)
         new_count_text = Text(f"Points: {current_total}", font_size=36).next_to(new_pi_text, DOWN)  
@@ -340,7 +341,7 @@ class MonteCarlo(Scene):
             new_pi_text = Text(f"π ≈ {pi_value:.8f}", font_size=36).to_edge(ORIGIN).scale(2)
             new_count_text = Text(f"Points: {current_total}", font_size=36).next_to(new_pi_text, DOWN)
             # self.play(FadeOut(*points), run_time=0.1)
-            self.play(Transform(pi_text, new_pi_text), Transform(count_text, new_count_text), run_time=1, lag_ratio=0.2)
+            self.play(Transform(pi_text, new_pi_text), Transform(count_text, new_count_text), run_time=.1, lag_ratio=0.1)
             
 
         # Fade out all elements at the end
@@ -348,7 +349,7 @@ class MonteCarlo(Scene):
         #self.play(FadeOut(Group(*points)), run_time=0.1)
         #self.play(FadeOut(square), FadeOut(circle), FadeOut(pi_text), FadeOut(count_text), FadeOut(point_text), FadeOut(distance_text))
         self.play(FadeOut(pi_text), FadeOut(count_text))
-        #########################################
+        #########################################       z<>,M
         ##########################################
         
         # now
