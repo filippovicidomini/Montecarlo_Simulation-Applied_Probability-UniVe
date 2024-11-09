@@ -342,12 +342,46 @@ class Credits(Scene):
         # Fade out all elements
         self.wait(2)
         self.play(FadeOut(created_by_text), FadeOut(names_text), FadeOut(university_text))
+
+class PythonCodeScene(Scene):
+    def construct(self):
+        # Codice Python da visualizzare
+        code = '''from random import random, sqrt\nimport numpy as np\n
+        
+def monte_carlo_pi(n):
+    #in this function we calculate the value 
+    #of pi using the monte carlo method
+       
+    inside_circle = 0
+    
+    for _ in range(n):
+        x, y = random(), random()
+        
+        if sqrt(x**2 + y**2) <= 1:
+            inside_circle += 1
+            
+    return (inside_circle / n) * 4'''
+
+        # Creazione dell'oggetto Code per visualizzare il codice Python
+        python_code = Code(
+            code=code,
+            tab_width=4,
+            background_stroke_width=0,
+            language="Python",
+            font_size=28,
+            insert_line_no=False,
+            style="monokai",
+        )
+
+        # Posizionamento del codice nella scena
+        python_code.to_edge(UP)  # Sposta il codice verso l'alto
+
+        # Animazione per mostrare il codice
+        self.play(Write(python_code), run_time=10, lag_ratio=0.9)
+        self.wait(2)
         
 
 
-
-from manim import *
-import numpy as np
 class MonteCarloIntegral(Scene):
     def construct(self):
         # Define the function and interval for integration
@@ -359,14 +393,14 @@ class MonteCarloIntegral(Scene):
         plane = Axes(
             x_range=[a - 1, b + 1, 1],
             y_range=[0, max_y + 1, 1],
-            x_length=6,
-            y_length=4,
+            x_length=5,
+            y_length=5,
             axis_config={"color": GREY},
             x_axis_config={"include_numbers": True},
             y_axis_config={"include_numbers": True}
-        ).shift(RIGHT * 2.6)
+        ).shift(RIGHT * 3.2)
 
-        # Label axes
+        # Label axes for the main plot
         x_label = plane.get_x_axis_label("x")
         y_label = plane.get_y_axis_label("f(x)")
         self.play(Create(plane), Write(x_label), Write(y_label))
@@ -375,45 +409,40 @@ class MonteCarloIntegral(Scene):
         graph = plane.plot(func, x_range=[a, b], color=PURE_BLUE)
         self.play(Create(graph))
 
-        # Create second plane (plane2) for the approximation graph
-        plane2 = Axes(
-            x_range=[0, 10, 10],  # Number of points on x-axis
-            y_range=[0, 10, 1],  # Integral approximation values on y-axis
+        # Initialize dynamic range for the secondary plot (plane2)
+        x_tracker = ValueTracker(5)  # Track number of points dynamically
+        y_tracker = ValueTracker(5)   # Track integral approximation range dynamically
+        integral_approximations = [0]  # List to store integral approximations
+
+        # Define plane2 with dynamic x and y ranges, updating based on trackers
+        plane2 = always_redraw(lambda: Axes(
+            x_range=[0, x_tracker.get_value(), 5],
+            y_range=[0, y_tracker.get_value(), 5],
             x_length=5,
-            y_length=3,
+            y_length=5,
             axis_config={"color": GREY},
             x_axis_config={"include_numbers": True},
             y_axis_config={"include_numbers": True}
-        ).shift(LEFT * 3)  # Position it to the left of the first plane
+        ).shift(LEFT * 3))
 
-        # Label axes for plane2
-        x_label2 = plane2.get_x_axis_label("Points")
+        # Add labels for plane2
+        x_label2 = plane2.get_x_axis_label("Number of Points").next_to(plane2, DOWN)
         y_label2 = plane2.get_y_axis_label("Integral Approximation")
-        self.play(Create(plane2), Write(x_label2), Write(y_label2))
+        self.add(plane2, x_label2, y_label2)
 
-        # Create the initial line for the integral approximation using plot_line_graph
-        integral_approximations = []  # To store the approximations
-        integral_approximations.append(0)  # Start with an initial approximation of 0
-        integral_approximation_graph = plane2.plot_line_graph(
-            x_values=np.array([0]),  # Initial x value (0 points)
-            y_values=np.array([0]),  # Initial y value (approximation = 0)
+        # Monte Carlo simulation variables
+        n_under_curve = 0
+        total_points = 20  # Total number of points to sample
+
+        # Define an always-updating graph for integral approximations
+        integral_approximation_graph = always_redraw(lambda: plane2.plot_line_graph(
+            x_values=list(range(len(integral_approximations))),
+            y_values=integral_approximations,
             line_color=YELLOW
-        )
-        self.play(Create(integral_approximation_graph))
+        ))
+        self.add(integral_approximation_graph)
 
-        # Centered text elements for approximation display
-        #integral_text = Text("Approx. Integral ≈ 0", font_size=36).to_edge(LEFT*1.3)
-        #count_text = Text("Points: 0", font_size=30).next_to(integral_text, DOWN)
-        #self.play(Write(integral_text), Write(count_text))
-
-        # Variables for points and counters
-        points = []
-        n_under_curve = 0  
-        total_points = 10  # Total number of points to display
-        slow_phase_points = 10  # Points in slow phase
-        base_run_time = 0.2     # Initial speed for slow phase
-
-        # Monte Carlo sampling animation
+        # Main sampling and plotting loop
         for i in range(total_points):
             # Generate a random point in the bounding box
             x = np.random.uniform(a, b)
@@ -426,29 +455,20 @@ class MonteCarloIntegral(Scene):
                 n_under_curve += 1
             else:
                 point.set_color(ORANGE)
-            points.append(point)
-            
-            # Animation speed: slow for first phase, then quicker
-            current_run_time = base_run_time if i < slow_phase_points else base_run_time * (0.85 ** (i - slow_phase_points))
-            self.play(Create(point), run_time=current_run_time)
 
-            # Update integral approximation
-            #approx_integral = (b - a) * max_y * (n_under_curve / (i + 1))
-            #integral_approximations.append(approx_integral)
+            # Display each point on the main graph
+            self.play(Create(point), run_time=0.05)
 
-            # Update the graph for integral approximation using plot_line_graph
-            integral_approximation_graph = plane2.plot_line_graph(
-                x_values=np.arange(i + 1),
-                y_values=np.array(integral_approximations),
-                line_color=YELLOW
-            )
-            self.play(Transform(integral_approximation_graph, integral_approximation_graph), run_time=current_run_time)
+            # Calculate and store the integral approximation
+            approx_integral = (b - a) * max_y * (n_under_curve / (i + 1))
+            integral_approximations.append(approx_integral)
 
-            # Update integral value text
-            #new_integral_text = Text(f"Approx. Integral ≈ {approx_integral:.4f}", font_size=36).move_to(integral_text)
-            #new_count_text = Text(f"Points: {i + 1}", font_size=30).next_to(new_integral_text, DOWN)
-            #self.play(Transform(integral_text, new_integral_text), Transform(count_text, new_count_text), run_time=current_run_time)
+            # Adjust the x and y range of plane2 based on current max values
+            x_tracker.set_value(len(integral_approximations))
+            y_tracker.set_value(max(y_tracker.get_value(), approx_integral + 1))
 
         # Show final approximation briefly and fade out elements
         self.wait(2)
-        self.play(FadeOut(VGroup(*points), graph, plane, x_label, y_label, plane2, x_label2, y_label2))
+        self.play(FadeOut(VGroup(plane, plane2, integral_approximation_graph, x_label, y_label, x_label2, y_label2)))
+        
+        
