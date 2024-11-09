@@ -382,94 +382,93 @@ def monte_carlo_pi(n):
         self.wait(2)
         
 
+from manim import *
+import numpy as np
 
-class MonteCarloIntegral(Scene):
+from manim import *
+import numpy as np
+
+from manim import *
+import numpy as np
+
+from manim import *
+import numpy as np
+
+class MonteCarloIntegration(Scene):
     def construct(self):
-        # Define the function and interval for integration
-        a, b = -2, 2  # Interval [a, b]
-        func = lambda x: x**2  # Function to integrate: f(x) = x^2
-        max_y = func(b)  # Max value for bounding box
+        # Parameters
+        a, b = 0, 2.5                     # Integration interval [a, b]
+        func = lambda x: np.sin(x) + 1  # Function to integrate: f(x) = sin(x) + 1
+        y_max = 2.5                     # Maximum y-value for bounding box
+        n_points = 10000                # Total number of points for Monte Carlo simulation
+        batch_size = 1000                 # Number of points shown per update
+        max_display_dots = 100           # Maximum number of dots displayed on screen
+        dot_radius = 0.025              # Radius of dots
+        axis_length = (6, 4)            # Length of x and y axes
 
-        # Set up the Cartesian plane for the function
-        plane = Axes(
-            x_range=[a - 1, b + 1, 1],
-            y_range=[0, max_y + 1, 1],
-            x_length=5,
-            y_length=5,
-            axis_config={"color": GREY},
-            x_axis_config={"include_numbers": True},
-            y_axis_config={"include_numbers": True}
-        ).shift(RIGHT * 3.2)
+        # Calculated integral area for bounding rectangle
+        integral_area = abs(b - a) * y_max
 
-        # Label axes for the main plot
-        x_label = plane.get_x_axis_label("x")
-        y_label = plane.get_y_axis_label("f(x)")
-        self.play(Create(plane), Write(x_label), Write(y_label))
+        # Axes setup
+        axes = Axes(
+            x_range=[a, b + 0.5, 0.5],
+            y_range=[0, y_max, 0.5],
+            x_length=axis_length[0],
+            y_length=axis_length[1],
+            axis_config={"include_tip": True},
+        ).add_coordinates()
+        labels = axes.get_axis_labels(x_label="x", y_label="f(x)")
+        self.play(Create(axes), Write(labels))
 
-        # Draw the function curve
-        graph = plane.plot(func, x_range=[a, b], color=PURE_BLUE)
-        self.play(Create(graph))
+        # Plot the function f(x)
+        func_graph = axes.plot(func, color=BLUE)
+        self.play(Create(func_graph), run_time=4)
 
-        # Initialize dynamic range for the secondary plot (plane2)
-        x_tracker = ValueTracker(5)  # Track number of points dynamically
-        y_tracker = ValueTracker(5)   # Track integral approximation range dynamically
-        integral_approximations = [0]  # List to store integral approximations
+        # Monte Carlo points within bounding box
+        under_curve_points = 0  # Counter for points under the curve
+        dot_group = VGroup()
+        estimate_text = MathTex(r"\text{Estimated Area} \approx 0.0000")
+        estimate_text.next_to(axes, DOWN)
+        self.play(Write(estimate_text))
 
-        # Define plane2 with dynamic x and y ranges, updating based on trackers
-        plane2 = always_redraw(lambda: Axes(
-            x_range=[0, x_tracker.get_value(), 5],
-            y_range=[0, y_tracker.get_value(), 5],
-            x_length=5,
-            y_length=5,
-            axis_config={"color": GREY},
-            x_axis_config={"include_numbers": True},
-            y_axis_config={"include_numbers": True}
-        ).shift(LEFT * 3))
+        # Loop through points in batches
+        for i in range(0, n_points, batch_size):
+            new_dots = VGroup()
+            batch_under_curve = 0
 
-        # Add labels for plane2
-        x_label2 = plane2.get_x_axis_label("Number of Points").next_to(plane2, DOWN)
-        y_label2 = plane2.get_y_axis_label("Integral Approximation")
-        self.add(plane2, x_label2, y_label2)
+            # Generate a batch of random points and count those under the curve
+            for _ in range(batch_size):
+                x_rand = np.random.uniform(a, b)
+                y_rand = np.random.uniform(0, y_max)
+                dot = Dot(axes.c2p(x_rand, y_rand), radius=dot_radius)
 
-        # Monte Carlo simulation variables
-        n_under_curve = 0
-        total_points = 20  # Total number of points to sample
+                # Determine color based on whether the point is under the curve
+                if y_rand <= func(x_rand):
+                    dot.set_color(GREEN)
+                    batch_under_curve += 1
+                else:
+                    dot.set_color(RED)
 
-        # Define an always-updating graph for integral approximations
-        integral_approximation_graph = always_redraw(lambda: plane2.plot_line_graph(
-            x_values=list(range(len(integral_approximations))),
-            y_values=integral_approximations,
-            line_color=YELLOW
-        ))
-        self.add(integral_approximation_graph)
+                new_dots.add(dot)
 
-        # Main sampling and plotting loop
-        for i in range(total_points):
-            # Generate a random point in the bounding box
-            x = np.random.uniform(a, b)
-            y = np.random.uniform(0, max_y)
-            point = Dot(point=plane.coords_to_point(x, y), radius=0.05)
+            # Update overall count and estimation
+            under_curve_points += batch_under_curve
+            area_estimate = (under_curve_points / (i + batch_size)) * integral_area
+            new_estimate_text = MathTex(r"\text{Estimated Area} \approx " + f"{area_estimate:.4f}")
+            new_estimate_text.next_to(axes, DOWN)
 
-            # Determine if the point is under the curve
-            if y <= func(x):
-                point.set_color(PURE_BLUE)
-                n_under_curve += 1
-            else:
-                point.set_color(ORANGE)
+            # Remove excess dots if necessary to limit displayed dots
+            if len(dot_group) + len(new_dots) > max_display_dots:
+                dot_group.submobjects = dot_group.submobjects[len(new_dots):]
 
-            # Display each point on the main graph
-            self.play(Create(point), run_time=0.05)
+            dot_group.add(*new_dots)  # Add new dots to the group
 
-            # Calculate and store the integral approximation
-            approx_integral = (b - a) * max_y * (n_under_curve / (i + 1))
-            integral_approximations.append(approx_integral)
+            # Animate the dots and update the estimate text
+            self.play(Create(new_dots), Transform(estimate_text, new_estimate_text), run_time=0.5, LagRatio=0.9)
 
-            # Adjust the x and y range of plane2 based on current max values
-            x_tracker.set_value(len(integral_approximations))
-            y_tracker.set_value(max(y_tracker.get_value(), approx_integral + 1))
-
-        # Show final approximation briefly and fade out elements
+        # Display final result
+        final_estimate = (under_curve_points / n_points) * integral_area
+        final_text = MathTex(r"\text{Final Estimated Area} \approx " + f"{final_estimate:.4f}")
+        final_text.next_to(axes, DOWN)
+        self.play(Transform(estimate_text, final_text), run_time=2)
         self.wait(2)
-        self.play(FadeOut(VGroup(plane, plane2, integral_approximation_graph, x_label, y_label, x_label2, y_label2)))
-        
-        
