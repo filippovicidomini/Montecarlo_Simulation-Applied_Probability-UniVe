@@ -115,7 +115,7 @@ class PiEstimation(Scene): # DONE
         
         self.wait(1)
         
-class MonteCarlo(Scene):
+class MonteCarlo(Scene): # per pi greco funziona bene
     def construct(self):
         # Creazione del quadrato e del cerchio
         square = Square(side_length=4, color=XKCD.BABYPURPLE).move_to(ORIGIN)
@@ -321,7 +321,7 @@ class MonteCarlo(Scene):
         
         # now
         
-class Credits(Scene):
+class Credits(Scene): # da sistemare
     def construct(self):
         # Display "Created by:" at the top
         created_by_text = Text("Created by:", font_size=36)
@@ -343,7 +343,8 @@ class Credits(Scene):
         self.wait(2)
         self.play(FadeOut(created_by_text), FadeOut(names_text), FadeOut(university_text))
 
-class PythonCodeScene(Scene):
+class PythonCodeScene(Scene): # DONE 
+    # https://stackoverflow.com/questions/76197478/how-do-i-highlight-one-line-of-code-in-manim
     def construct(self):
         # Codice Python da visualizzare
         code = '''from random import random, sqrt\nimport numpy as np\n
@@ -377,7 +378,7 @@ def monte_carlo_pi(n):
         python_code.to_edge(UP)  # Sposta il codice verso l'alto
 
         # Animazione per mostrare il codice
-        self.play(Write(python_code), run_time=10, lag_ratio=0.9)
+        self.play(Write(python_code), run_time=20, lag_ratio=0.9)
         self.wait(2)
         
 
