@@ -23,6 +23,12 @@ class FinalVideo(Scene): # HERE PUT ALL THE SCENE TOGETHER calling scene.constru
         PiEstimation.construct(self)
         self.wait(2)
         MonteCarlo.construct(self)
+        self.wait(2)
+        PythonCodeScene.construct(self)
+        self.wait(2)
+        MonteCarloIntegration.construct(self)
+        self.wait(2)
+        Credits.construct(self)
 
 class PiEstimation(Scene): # DONE
     def construct(self):
@@ -81,21 +87,21 @@ class PiEstimation(Scene): # DONE
         pi_formula_final[0][8:9].set_color(GREEN)      # \pi in red
 
         # Animations
-        self.play(Create(shapes), run_time=2)
-        self.play(Create(radius_line), Write(radius_label), run_time=2)
+        self.play(Create(shapes), run_time=3)
+        self.play(Create(radius_line), Write(radius_label), run_time=3)
         
         # Display each part of the formulas
-        self.play(Write(area_circle), run_time=2)
-        self.play(Write(area_square), run_time=2)
+        self.play(Write(area_circle), run_time=3)
+        self.play(Write(area_square), run_time=3)
         
         # Show ratio formula step-by-step, keeping the position constant
-        self.play(Write(ratio_formula_1), run_time=2)
+        self.play(Write(ratio_formula_1), run_time=3)
         self.wait(1)
-        self.play(Transform(ratio_formula_1, ratio_formula_2), run_time=2)
+        self.play(Transform(ratio_formula_1, ratio_formula_2), run_time=3)
         self.wait(1)
         
         # Transform directly to the final formula for π and move to center, enlarging it
-        self.play(Transform(ratio_formula_1, pi_formula_final), run_time=2)
+        self.play(Transform(ratio_formula_1, pi_formula_final), run_time=3)
         self.wait(1)
         
         # Reapply the colors explicitly after the transformation to ensure correctness
@@ -104,8 +110,8 @@ class PiEstimation(Scene): # DONE
         pi_formula_final[0][6:8].set_color(GREEN)      # \pi in red
 
         # Remove square and circle, and center the enlarged final formula
-        self.play(FadeOut(shapes), FadeOut(radius_line), FadeOut(radius_label), FadeOut(area_circle), FadeOut(area_square))
-        self.play(FadeOut(ratio_formula_1), run_time=1)
+        self.play(FadeOut(shapes), FadeOut(radius_line), FadeOut(radius_label), FadeOut(area_circle), FadeOut(area_square), run_time=2)
+        self.play(FadeOut(ratio_formula_1), run_time=2)
         self.play(Write(pi_formula_final.move_to(ORIGIN).scale(2)))
         
         self.wait(2)
@@ -140,7 +146,7 @@ class MonteCarlo(Scene): # per pi greco funziona bene
         n_inside = 0  
         total_points = 100  # Numero totale di punti da visualizzare
         slow_phase_points = 10  # Numero di punti nella fase lenta
-        base_run_time = 0.2     # Tempo di esecuzione iniziale per la fase lenta
+        base_run_time = 0.4     # Tempo di esecuzione iniziale per la fase lenta
 
         # Fase lenta per animare i singoli punti
         for i in range(total_points):
@@ -185,9 +191,10 @@ class MonteCarlo(Scene): # per pi greco funziona bene
         # Fase rapida: aggiunta di punti multipli per batch senza il vettore
         self.wait(.3)  # Pausa prima della fase rapida per il contrasto
         
+        
         total_points += 200  # Definisci un numero elevato di punti per la fase rapida
         batch_size = 10  # Numero di punti per batch nella fase rapida
-        self.play(FadeOut(point_text), FadeOut(distance_text), run_time=0.5)
+        self.play(FadeOut(point_text), FadeOut(distance_text), FadeOut(*points), run_time=1.5)
         
         for i in range(slow_phase_points, total_points, batch_size):
             new_points = []
@@ -200,7 +207,7 @@ class MonteCarlo(Scene): # per pi greco funziona bene
                     n_inside_ += 1
 
             # Visualizza il batch di punti contemporaneamente
-            self.play(*[Create(p) for p in new_points], run_time=0.1)
+            self.play(*[Create(p) for p in new_points], run_time=0.2)
             points = new_points
 
             # Aggiorna l'approssimazione di π e il conteggio totale
@@ -209,11 +216,11 @@ class MonteCarlo(Scene): # per pi greco funziona bene
             pi_value = 4 * n_inside / current_total
             new_pi_text = Text(f"π ≈ {pi_value:.5f}", font_size=36).to_edge(UP)
             new_count_text = Text(f"Points: {current_total}", font_size=36).next_to(new_pi_text, DOWN)
-            self.play(Transform(pi_text, new_pi_text), Transform(count_text, new_count_text), run_time=0.1)
+            self.play(Transform(pi_text, new_pi_text), Transform(count_text, new_count_text), run_time=0.2)
             
         # Dissolvi tutti gli elementi al termine
         self.wait(2)
-        self.play(FadeOut(square), FadeOut(circle), FadeOut(pi_text), FadeOut(count_text), FadeOut(Group(*points)))
+        #self.play(FadeOut(square), FadeOut(circle), FadeOut(pi_text), FadeOut(count_text), FadeOut(Group(*points)))
         # Fade out all elements at the end
         #self.wait(.1)
         #self.play(FadeOut(Group(*points)), run_time=0.1)
@@ -253,7 +260,7 @@ class MonteCarlo(Scene): # per pi greco funziona bene
             new_count_text = Text(f"Points: {current_total}", font_size=36).next_to(new_pi_text, DOWN)
             self.play(Transform(pi_text, new_pi_text), Transform(count_text, new_count_text), run_time=0.1, lag_ratio=0.1)
             
-
+        self.play(FadeOut(square), FadeOut(circle), FadeOut(pi_text), FadeOut(count_text), FadeOut(Group(*points)))
         # Fade out all elements at the end
         #self.wait(.1)
         #xself.play(FadeOut(Group(*points)), run_time=0.1)
@@ -271,10 +278,10 @@ class MonteCarlo(Scene): # per pi greco funziona bene
         batch_size = 50000  # Number of points per batch in the fast phase
         # remove all the previous points
         #self.play(FadeOut(Group(*points)))
-        self.play(FadeOut(Group(*points)), run_time=0.1, lag_ratio=0.4) 
+        self.play(FadeOut(Group(*points)), run_time=0.2, lag_ratio=0.9) 
         self.play(FadeOut(circle), FadeOut(square))
         self.play(pi_text.animate.move_to(ORIGIN).scale(2), run_time=1)
-        self.play(count_text.animate.move_to(ORIGIN+DOWN).scale(1), run_time=1)
+        self.play(count_text.animate.move_to(pi_text + DOWN), run_time=1)
         # animate pi text and count text in sync
         
         
@@ -332,7 +339,7 @@ class Credits(Scene): # da sistemare
         names = ["Filippo Vicidomini", "Nome 2", "Nome 3", "Nome 4"]
         names_text = VGroup(*[Text(name, font_size=40) for name in names])
         names_text.arrange(DOWN, center=True)
-        self.play(Write(names_text, shift=UP))
+        self.play(Write(names_text, shift=UP), run_time=10)
 
         # Display "University Ca' Foscari of Venice" at the bottom
         university_text = Text("University Ca' Foscari of Venice", font_size=36)
@@ -340,8 +347,8 @@ class Credits(Scene): # da sistemare
         self.play(Write(university_text))
 
         # Fade out all elements
-        self.wait(2)
-        self.play(FadeOut(created_by_text), FadeOut(names_text), FadeOut(university_text))
+        self.wait(5)
+        self.play(FadeOut(created_by_text), FadeOut(names_text), FadeOut(university_text), run_time=2)
 
 class PythonCodeScene(Scene): # DONE 
     # https://stackoverflow.com/questions/76197478/how-do-i-highlight-one-line-of-code-in-manim
@@ -380,56 +387,51 @@ def monte_carlo_pi(n):
         # Animazione per mostrare il codice
         self.play(Write(python_code), run_time=20, lag_ratio=0.9)
         self.wait(2)
-        
+        self.play(FadeOut(python_code))
 
-from manim import *
-import numpy as np
-
-from manim import *
-import numpy as np
-
-from manim import *
-import numpy as np
-
-from manim import *
-import numpy as np
-
-class MonteCarloIntegration(Scene):
+class MonteCarloIntegration(Scene): # CARINO
     def construct(self):
         # Parameters
         a, b = 0, 2.5                     # Integration interval [a, b]
-        func = lambda x: np.sin(x) + 1  # Function to integrate: f(x) = sin(x) + 1
-        y_max = 2.5                     # Maximum y-value for bounding box
-        n_points = 10000                # Total number of points for Monte Carlo simulation
-        batch_size = 1000                 # Number of points shown per update
-        max_display_dots = 100           # Maximum number of dots displayed on screen
-        dot_radius = 0.025              # Radius of dots
-        axis_length = (6, 4)            # Length of x and y axes
+        func = lambda x: np.sin(x) + 1    # Function to integrate: f(x) = sin(x) + 1
+        y_max = 2.5                       # Maximum y-value for bounding box
+        n_points = 20000                  # Total number of points for Monte Carlo simulation
+        batch_size = 2000                 # Number of points shown per update
+        max_display_dots = 100            # Maximum number of dots displayed on screen
+        dot_radius = 0.025                # Radius of dots
+        axis_length = (7, 4)              # Length of x and y axes
 
         # Calculated integral area for bounding rectangle
         integral_area = abs(b - a) * y_max
 
-        # Axes setup
+        # Initial estimate text at the top with the integral formula
+        initial_text = MathTex(
+            r"\int_{" + f"{a}" + "}^{" + f"{b}" + r"} \left(\sin(x) + 1\right) \, dx \approx 4.30114"
+        ).scale(0.7)
+        initial_text.to_edge(UP)
+        self.play(Write(initial_text))
+
+        # Axes setup without y-axis label
         axes = Axes(
-            x_range=[a, b + 0.5, 0.5],
-            y_range=[0, y_max, 0.5],
+            x_range=[a-0.3, b + 0.2, 0.5],
+            y_range=[0, y_max + 0.3, 0.5],
             x_length=axis_length[0],
             y_length=axis_length[1],
             axis_config={"include_tip": True},
         ).add_coordinates()
-        labels = axes.get_axis_labels(x_label="x", y_label="f(x)")
-        self.play(Create(axes), Write(labels))
+        x_label = MathTex("x").next_to(axes.x_axis, RIGHT)
+        self.play(Create(axes), Write(x_label), run_time=2)
 
         # Plot the function f(x)
         func_graph = axes.plot(func, color=BLUE)
-        self.play(Create(func_graph), run_time=4)
+        self.play(Create(func_graph), run_time=3)
 
         # Monte Carlo points within bounding box
         under_curve_points = 0  # Counter for points under the curve
         dot_group = VGroup()
         estimate_text = MathTex(r"\text{Estimated Area} \approx 0.0000")
         estimate_text.next_to(axes, DOWN)
-        self.play(Write(estimate_text))
+        self.play(Write(estimate_text), run_time=2)
 
         # Loop through points in batches
         for i in range(0, n_points, batch_size):
@@ -456,6 +458,9 @@ class MonteCarloIntegration(Scene):
             area_estimate = (under_curve_points / (i + batch_size)) * integral_area
             new_estimate_text = MathTex(r"\text{Estimated Area} \approx " + f"{area_estimate:.4f}")
             new_estimate_text.next_to(axes, DOWN)
+            #updated_integral_text = MathTex(
+            #    r"\int_{" + f"{a}" + "}^{" + f"{b}" + r"} \left(\sin(x) + 1\right) \, dx \approx " + f"{area_estimate:.4f}"
+            #).to_edge(UP)
 
             # Remove excess dots if necessary to limit displayed dots
             if len(dot_group) + len(new_dots) > max_display_dots:
@@ -464,11 +469,127 @@ class MonteCarloIntegration(Scene):
             dot_group.add(*new_dots)  # Add new dots to the group
 
             # Animate the dots and update the estimate text
-            self.play(Create(new_dots), Transform(estimate_text, new_estimate_text), run_time=0.5, LagRatio=0.9)
+            self.play(
+                Create(new_dots), 
+                Transform(estimate_text, new_estimate_text),
+                #Transform(initial_text, updated_integral_text), 
+                run_time=2, 
+                lag_ratio=0.9
+            )
 
-        # Display final result
-        final_estimate = (under_curve_points / n_points) * integral_area
-        final_text = MathTex(r"\text{Final Estimated Area} \approx " + f"{final_estimate:.4f}")
-        final_text.next_to(axes, DOWN)
-        self.play(Transform(estimate_text, final_text), run_time=2)
+        # Final integral estimate
+        #final_text = MathTex(
+         #   r"\int_{" + f"{a}" + "}^{" + f"{b}" + r"} \left(\sin(x) + 1\right) \, dx \approx " + f"{area_estimate:.4f}"
+        #).to_edge(UP)
+        #self.play(Transform(initial_text, final_text), run_time=2)
         self.wait(2)
+        self.play(FadeOut(initial_text), FadeOut(axes), FadeOut(func_graph), FadeOut(dot_group), FadeOut(estimate_text), run_time=2)
+        
+from manim import *
+import numpy as np
+
+from manim import *
+import numpy as np
+
+from manim import *
+import numpy as np
+
+from manim import *
+import numpy as np
+
+from manim import *
+import numpy as np
+
+from manim import *
+import numpy as np
+
+from manim import *
+import numpy as np
+
+from manim import *
+import numpy as np
+
+from manim import *
+import numpy as np
+
+from manim import *
+import numpy as np
+
+from manim import *
+import numpy as np
+
+class DynamicMonteCarloApproximation(Scene):
+    def construct(self):
+        # Parameters
+        a, b = 0, 2.5                      # Integration interval [a, b]
+        func = lambda x: np.sin(x) + 1     # Function to integrate: f(x) = sin(x) + 1
+        y_max = 2.5                        # Maximum y-value for bounding box
+        n_points = 100                      # Total number of points for Monte Carlo simulation
+        batch_size = 1                      # Number of points shown per update
+        integral_area = abs(b - a) * y_max  # Area of the bounding box
+
+        # Initial Axes setup
+        plot_axes = Axes(
+            x_range=[0, 10, 1],  # Initial x_range, will expand dynamically
+            y_range=[0, 2, 0.5],
+            x_length=6,
+            y_length=3,
+            axis_config={"include_tip": False},
+        )
+        plot_axes.to_edge(DOWN)
+        x_label = MathTex("n").next_to(plot_axes.x_axis, RIGHT)
+        y_label = MathTex(r"\text{Approximation Value}").next_to(plot_axes.y_axis, UP, buff=0.3)
+        self.play(Create(plot_axes), Write(x_label), Write(y_label))
+
+        # Value Tracker for number of points and approximation value
+        point_tracker = ValueTracker(0)  # Number of points tracked
+        approx_tracker = ValueTracker(0)  # Approximation value tracked
+        under_curve_points = 0
+
+        # Create a line to show the approximation curve
+        approx_line = always_redraw(lambda: self.create_approximation_line(point_tracker.get_value(), approx_tracker.get_value(), plot_axes))
+
+        # Main loop for Monte Carlo approximation with dynamic updates
+        self.add(approx_line)  # Add the initial approximation line
+
+        # Generate points and update the plot
+        for i in range(0, n_points, batch_size):
+            batch_under_curve = 0
+
+            # Generate a batch of random points and count those under the curve
+            for _ in range(batch_size):
+                x_rand = np.random.uniform(a, b)
+                y_rand = np.random.uniform(0, y_max)
+                if y_rand <= func(x_rand):
+                    batch_under_curve += 1
+
+            under_curve_points += batch_under_curve
+            area_estimate = (under_curve_points / (i + batch_size)) * integral_area
+            approx_tracker.set_value(area_estimate)
+            point_tracker.increment_value(batch_size)  # Increment the number of points shown
+
+            # Dynamically expand the x-range of the plot
+            current_n = point_tracker.get_value()
+            if current_n > plot_axes.x_range[1]:
+                new_x_range = current_n + 10  # Increase x-range progressively
+                plot_axes.x_range = [0, new_x_range, new_x_range // 10]
+                plot_axes.x_axis.scale_to_fit_width(6)  # Keep axis within frame
+
+            # Animate the update
+            self.play(UpdateFromFunc(approx_line, lambda mob: mob))  # Forces an update on the approximation line
+
+        self.wait(2)
+
+    # Function to create the line of approximation for the Monte Carlo estimation
+    def create_approximation_line(self, n_points, approximation_value, plot_axes):
+        # Create a line showing the Monte Carlo approximation over time
+        previous_point = plot_axes.c2p(0, 0)
+        approx_line = VGroup()
+
+        for i in range(int(n_points)):
+            current_point = plot_axes.c2p(i + 1, approximation_value)
+            new_line_segment = Line(previous_point, current_point, color=YELLOW)
+            approx_line.add(new_line_segment)
+            previous_point = current_point
+        
+        return approx_line

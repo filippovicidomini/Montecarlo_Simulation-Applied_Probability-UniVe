@@ -1,0 +1,13 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/DynamicMonteCarloPlot/3977891868_3333081492_223132457.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/DynamicMonteCarloPlot/2852726489_2190835311_3362775349.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/DynamicMonteCarloPlot/2852726489_344843825_3530312513.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/DynamicMonteCarloPlot/2852726489_203144799_3982349350.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/DynamicMonteCarloPlot/2852726489_3597824645_1190659763.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/DynamicMonteCarloPlot/2852726489_883850823_4244774623.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/DynamicMonteCarloPlot/2852726489_3980825836_3207292917.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/DynamicMonteCarloPlot/2852726489_3294164573_67232669.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/DynamicMonteCarloPlot/2852726489_1606417074_349430463.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/DynamicMonteCarloPlot/2852726489_1485306542_2503184230.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/DynamicMonteCarloPlot/2852726489_3575803665_349125689.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/DynamicMonteCarloPlot/2852726489_1141282389_26335811.mp4'
