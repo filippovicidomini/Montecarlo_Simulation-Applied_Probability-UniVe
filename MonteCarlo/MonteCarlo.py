@@ -217,7 +217,7 @@ class MonteCarlo(Scene): # per pi greco funziona bene
             new_pi_text = Text(f"π ≈ {pi_value:.5f}", font_size=36).to_edge(UP)
             new_count_text = Text(f"Points: {current_total}", font_size=36).next_to(new_pi_text, DOWN)
             self.play(Transform(pi_text, new_pi_text), Transform(count_text, new_count_text), run_time=0.2)
-            
+            self.play(FadeOut(*points), run_time=0.1)
         # Dissolvi tutti gli elementi al termine
         self.wait(2)
         #self.play(FadeOut(square), FadeOut(circle), FadeOut(pi_text), FadeOut(count_text), FadeOut(Group(*points)))
@@ -233,7 +233,7 @@ class MonteCarlo(Scene): # per pi greco funziona bene
         total_points += 2000  # Define a large number of points for the fast phase
         batch_size = 100  # Number of points per batch in the fast phase
         # remove all the previous points
-        #self.play(FadeOut(Group(*points)), FadeOut(point_text), FadeOut(distance_text))
+        self.play(FadeOut(Group(*points)))
         for i in range(slow_phase_points, total_points, batch_size):
             self.play(FadeOut(Group(*points)), run_time=0.1, lag_ratio=0.9) 
             new_points = []
@@ -278,10 +278,10 @@ class MonteCarlo(Scene): # per pi greco funziona bene
         batch_size = 50000  # Number of points per batch in the fast phase
         # remove all the previous points
         #self.play(FadeOut(Group(*points)))
-        self.play(FadeOut(Group(*points)), run_time=0.2, lag_ratio=0.9) 
+        #self.play(FadeOut(Group(*points)), run_time=0.2, lag_ratio=0.9) 
         self.play(FadeOut(circle), FadeOut(square))
         self.play(pi_text.animate.move_to(ORIGIN).scale(2), run_time=1)
-        self.play(count_text.animate.move_to(pi_text + DOWN), run_time=1)
+        self.play(count_text.animate.move_to(pi_text.get_bottom() + DOWN), run_time=1)
         # animate pi text and count text in sync
         
         
@@ -483,7 +483,9 @@ class MonteCarloIntegration(Scene): # CARINO
         #).to_edge(UP)
         #self.play(Transform(initial_text, final_text), run_time=2)
         self.wait(2)
-        self.play(FadeOut(initial_text), FadeOut(axes), FadeOut(func_graph), FadeOut(dot_group), FadeOut(estimate_text), run_time=2)
+        self.play(FadeOut(initial_text), FadeOut(axes), FadeOut(func_graph), FadeOut(dot_group), FadeOut(estimate_text), FadeOut(x_label), FadeOut(dot_group), run_time=2)
+        # remove all the green and red dots
+
         
 from manim import *
 import numpy as np
@@ -593,3 +595,7 @@ class DynamicMonteCarloApproximation(Scene):
             previous_point = current_point
         
         return approx_line
+    
+        self.wait(2)
+        self.play(FadeOut(plot_axes), FadeOut(x_label), FadeOut(y_label), FadeOut(approx_line))
+    
