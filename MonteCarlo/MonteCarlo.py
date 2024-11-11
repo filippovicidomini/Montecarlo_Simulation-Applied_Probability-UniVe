@@ -28,7 +28,10 @@ class FinalVideo(Scene): # HERE PUT ALL THE SCENE TOGETHER calling scene.constru
         self.wait(2)
         MonteCarloIntegration.construct(self)
         self.wait(2)
+        MonteCarloIntegration3D.construct(self)
+        self.wait(2)
         Credits.construct(self)
+        
 
 class PiEstimation(Scene): # DONE
     def construct(self):
@@ -486,116 +489,120 @@ class MonteCarloIntegration(Scene): # CARINO
         self.play(FadeOut(initial_text), FadeOut(axes), FadeOut(func_graph), FadeOut(dot_group), FadeOut(estimate_text), FadeOut(x_label), FadeOut(dot_group), run_time=2)
         # remove all the green and red dots
 
-        
 from manim import *
-import numpy as np
 
 from manim import *
-import numpy as np
 
 from manim import *
-import numpy as np
 
 from manim import *
-import numpy as np
 
 from manim import *
-import numpy as np
 
 from manim import *
-import numpy as np
 
 from manim import *
-import numpy as np
 
 from manim import *
-import numpy as np
 
 from manim import *
-import numpy as np
 
 from manim import *
-import numpy as np
 
 from manim import *
-import numpy as np
 
-class DynamicMonteCarloApproximation(Scene):
+class MonteCarloIntegration3D(ThreeDScene):
     def construct(self):
         # Parameters
-        a, b = 0, 2.5                      # Integration interval [a, b]
-        func = lambda x: np.sin(x) + 1     # Function to integrate: f(x) = sin(x) + 1
-        y_max = 2.5                        # Maximum y-value for bounding box
-        n_points = 100                      # Total number of points for Monte Carlo simulation
-        batch_size = 1                      # Number of points shown per update
-        integral_area = abs(b - a) * y_max  # Area of the bounding box
+        a, b = -1, 1                     # Integration interval [a, b]
+        func = lambda x, y: np.sin(x) + np.cos(y) + 1    # Function to integrate
+        # find the maximum value of a 2d function in a given interval
+        z_max = max(func(x, y) for x in np.linspace(a, b, 100) for y in np.linspace(a, b, 100))
+        #z_max = 3  # Maximum z-value for bounding box
+        n_points = 500                    # Total number of points for Monte Carlo simulation
+        batch_size = 50                  # Number of points shown per update
+        max_display_dots = 80             # Maximum number of dots displayed on screen
+        dot_radius = 0.1                 # Radius of dots
 
-        # Initial Axes setup
-        plot_axes = Axes(
-            x_range=[0, 10, 1],  # Initial x_range, will expand dynamically
-            y_range=[0, 2, 0.5],
-            x_length=6,
-            y_length=3,
-            axis_config={"include_tip": False},
+        # 3D Axes setup
+        axes = ThreeDAxes(
+            x_range=[a - 0.3, b + 0.2, 0.5],
+            y_range=[a - 0.3, b + 0.2, 0.5],
+            z_range=[0, z_max + 0.3, 0.5],
+            axis_config={"include_tip": True},
+        ).move_to(ORIGIN - RIGHT)
+
+        # Set initial camera view
+        self.camera.set_zoom(0.6)  # Set the zoom level
+        #self.set_camera_orientation(phi=85 * DEGREES, theta=-45 * DEGREES)
+
+        # Create axes with the current camera settings
+        self.play(Create(axes), run_time=3)
+
+        # Move the camera around for a better view
+        self.move_camera(phi=85 * DEGREES, theta=45 * DEGREES, run_time=3)
+
+        # Define the function surface (the graph of the function)
+        func_surface = Surface(
+            lambda u, v: axes.c2p(u, v, func(u, v)),
+            u_range=[a, b],
+            v_range=[a, b],
+            resolution=(10, 10),
         )
-        plot_axes.to_edge(DOWN)
-        x_label = MathTex("n").next_to(plot_axes.x_axis, RIGHT)
-        y_label = MathTex(r"\text{Approximation Value}").next_to(plot_axes.y_axis, UP, buff=0.3)
-        self.play(Create(plot_axes), Write(x_label), Write(y_label))
+        func_surface.set_color_by_gradient(BLUE, YELLOW)
 
-        # Value Tracker for number of points and approximation value
-        point_tracker = ValueTracker(0)  # Number of points tracked
-        approx_tracker = ValueTracker(0)  # Approximation value tracked
-        under_curve_points = 0
+        # Begin ambient camera movement
+        self.begin_ambient_camera_rotation(rate=0.1)
 
-        # Create a line to show the approximation curve
-        approx_line = always_redraw(lambda: self.create_approximation_line(point_tracker.get_value(), approx_tracker.get_value(), plot_axes))
+        # Create the surface
+        self.play(Create(func_surface), run_time=5)
 
-        # Main loop for Monte Carlo approximation with dynamic updates
-        self.add(approx_line)  # Add the initial approximation line
+        # Monte Carlo simulation
+        under_surface_points = 0  # Counter for points under the surface
+        dot_group = VGroup()  # Group to store the dots
+        integral_area = (b - a) ** 2 * z_max  # Bounding box area
+        #estimate_text = MathTex(r"Volume \approx 0.0")
+        #estimate_text.to_edge(DOWN)
+        #self.play(Write(estimate_text), run_time=1)
 
-        # Generate points and update the plot
-        for i in range(0, n_points, batch_size):
-            batch_under_curve = 0
+        # Loop through points in batches
+        for _ in range(0, n_points, batch_size):
+            new_dots = VGroup()
+            batch_under_surface = 0
 
-            # Generate a batch of random points and count those under the curve
+            # Generate random points and check if they are under the surface
             for _ in range(batch_size):
                 x_rand = np.random.uniform(a, b)
-                y_rand = np.random.uniform(0, y_max)
-                if y_rand <= func(x_rand):
-                    batch_under_curve += 1
+                y_rand = np.random.uniform(a, b)
+                z_rand = np.random.uniform(0, z_max)
+                # Use Dot3D for 3D points
+                dot = Dot3D(point=axes.c2p(x_rand, y_rand, z_rand), radius=dot_radius)
 
-            under_curve_points += batch_under_curve
-            area_estimate = (under_curve_points / (i + batch_size)) * integral_area
-            approx_tracker.set_value(area_estimate)
-            point_tracker.increment_value(batch_size)  # Increment the number of points shown
+                # Check if the point is below the surface (function value)
+                if z_rand <= func(x_rand, y_rand):
+                    dot.set_color(GREEN)
+                    batch_under_surface += 1
+                else:
+                    dot.set_color(RED)
 
-            # Dynamically expand the x-range of the plot
-            current_n = point_tracker.get_value()
-            if current_n > plot_axes.x_range[1]:
-                new_x_range = current_n + 10  # Increase x-range progressively
-                plot_axes.x_range = [0, new_x_range, new_x_range // 10]
-                plot_axes.x_axis.scale_to_fit_width(6)  # Keep axis within frame
+                new_dots.add(dot)
 
-            # Animate the update
-            self.play(UpdateFromFunc(approx_line, lambda mob: mob))  # Forces an update on the approximation line
+            # Update the count of points under the surface
+            under_surface_points += batch_under_surface
+            # Estimate the integral value (volume)
+            volume_estimate = (under_surface_points / (batch_size * n_points)) * integral_area
 
+            # Update the text with the new estimate
+            new_estimate_text = MathTex(r"Volume \approx " + f"{volume_estimate:.4f}")
+            #new_estimate_text.next_to(estimate_text, DOWN)
+
+            # Update the dots and estimate text
+            self.play(
+                Create(new_dots),
+                #Transform(estimate_text, new_estimate_text),
+                run_time=1,
+                lag_ratio=0.9
+            )
+
+        # Wait before finishing
         self.wait(2)
-
-    # Function to create the line of approximation for the Monte Carlo estimation
-    def create_approximation_line(self, n_points, approximation_value, plot_axes):
-        # Create a line showing the Monte Carlo approximation over time
-        previous_point = plot_axes.c2p(0, 0)
-        approx_line = VGroup()
-
-        for i in range(int(n_points)):
-            current_point = plot_axes.c2p(i + 1, approximation_value)
-            new_line_segment = Line(previous_point, current_point, color=YELLOW)
-            approx_line.add(new_line_segment)
-            previous_point = current_point
-        
-        return approx_line
-    
-        self.wait(2)
-        self.play(FadeOut(plot_axes), FadeOut(x_label), FadeOut(y_label), FadeOut(approx_line))
-    
