@@ -2,6 +2,7 @@
     # and the library numpy to generate random numbers
     # the idea is to generate random points in a square and calculate the number of points that are inside a circle
     # then the value of pi is calculated as 4 * (number of points inside the circle) / (total number of points)
+import random
 from manim import *
 import numpy as np
 
@@ -20,6 +21,8 @@ from manim import *
 
 class FinalVideo(Scene): # HERE PUT ALL THE SCENE TOGETHER calling scene.construct(self)
     def construct(self):
+        PseudoRandomNumberGeneration.construct(self)
+        self.wait(2)
         PiEstimation.construct(self)
         self.wait(2)
         MonteCarlo.construct(self)
@@ -489,42 +492,18 @@ class MonteCarloIntegration(Scene): # CARINO
         self.play(FadeOut(initial_text), FadeOut(axes), FadeOut(func_graph), FadeOut(dot_group), FadeOut(estimate_text), FadeOut(x_label), FadeOut(dot_group), run_time=2)
         # remove all the green and red dots
 
-from manim import *
-
-from manim import *
-
-from manim import *
-
-from manim import *
-
-from manim import *
-
-from manim import *
-
-from manim import *
-
-from manim import *
-
-from manim import *
-
-from manim import *
-
-from manim import *
-
-class MonteCarloIntegration3D(ThreeDScene):
+class MonteCarloIntegration3D(ThreeDScene): # lento ma funziona, da aggiungere visualizzazione valore vero
     def construct(self):
         # Parameters
-        a, b = -1, 1                     # Integration interval [a, b]
-        func = lambda x, y: np.sin(x) + np.cos(y) + 1    # Function to integrate
-        # find the maximum value of a 2d function in a given interval
-        z_max = max(func(x, y) for x in np.linspace(a, b, 100) for y in np.linspace(a, b, 100))
-        #z_max = 3  # Maximum z-value for bounding box
-        n_points = 500                    # Total number of points for Monte Carlo simulation
-        batch_size = 50                  # Number of points shown per update
-        max_display_dots = 80             # Maximum number of dots displayed on screen
-        dot_radius = 0.1                 # Radius of dots
+        a, b = -1, 1
+        func = lambda x, y: np.sin(x) + np.cos(y) + 1
+        z_max = max(func(x, y) for x in np.linspace(a, b, 50) for y in np.linspace(a, b, 50))  # Reduced resolution for speed
+        n_points = 1000       # Lower total points
+        batch_size = 100      # Larger batch size for fewer updates
+        max_display_dots = 50 # Limit displayed dots
+        dot_radius = 0.07     # Smaller dot radius
 
-        # 3D Axes setup
+        # Axes setup
         axes = ThreeDAxes(
             x_range=[a - 0.3, b + 0.2, 0.5],
             y_range=[a - 0.3, b + 0.2, 0.5],
@@ -532,53 +511,33 @@ class MonteCarloIntegration3D(ThreeDScene):
             axis_config={"include_tip": True},
         ).move_to(ORIGIN - RIGHT)
 
-        # Set initial camera view
-        self.camera.set_zoom(0.6)  # Set the zoom level
-        #self.set_camera_orientation(phi=85 * DEGREES, theta=-45 * DEGREES)
+        # Set initial camera view without continuous rotation
+        self.camera.set_zoom(0.6)
+        self.play(Create(axes), run_time=2)
 
-        # Create axes with the current camera settings
-        self.play(Create(axes), run_time=3)
-
-        # Move the camera around for a better view
-        self.move_camera(phi=85 * DEGREES, theta=45 * DEGREES, run_time=3)
-
-        # Define the function surface (the graph of the function)
+        # Define and create function surface with lower resolution
         func_surface = Surface(
             lambda u, v: axes.c2p(u, v, func(u, v)),
             u_range=[a, b],
             v_range=[a, b],
-            resolution=(10, 10),
-        )
-        func_surface.set_color_by_gradient(BLUE, YELLOW)
-
-        # Begin ambient camera movement
-        self.begin_ambient_camera_rotation(rate=0.1)
-
-        # Create the surface
-        self.play(Create(func_surface), run_time=5)
+            resolution=(5, 5),  # Lower resolution
+        ).set_color_by_gradient(BLUE, YELLOW)
+        self.play(Create(func_surface), run_time=3)
 
         # Monte Carlo simulation
-        under_surface_points = 0  # Counter for points under the surface
-        dot_group = VGroup()  # Group to store the dots
-        integral_area = (b - a) ** 2 * z_max  # Bounding box area
-        #estimate_text = MathTex(r"Volume \approx 0.0")
-        #estimate_text.to_edge(DOWN)
-        #self.play(Write(estimate_text), run_time=1)
+        under_surface_points = 0
+        dot_group = VGroup()
+        integral_area = (b - a) ** 2 * z_max
 
-        # Loop through points in batches
-        for _ in range(0, n_points, batch_size):
+        # Only update dots and text every few batches to limit number of objects
+        for i in range(0, n_points, batch_size):
             new_dots = VGroup()
             batch_under_surface = 0
 
-            # Generate random points and check if they are under the surface
             for _ in range(batch_size):
-                x_rand = np.random.uniform(a, b)
-                y_rand = np.random.uniform(a, b)
-                z_rand = np.random.uniform(0, z_max)
-                # Use Dot3D for 3D points
+                x_rand, y_rand, z_rand = np.random.uniform(a, b), np.random.uniform(a, b), np.random.uniform(0, z_max)
                 dot = Dot3D(point=axes.c2p(x_rand, y_rand, z_rand), radius=dot_radius)
 
-                # Check if the point is below the surface (function value)
                 if z_rand <= func(x_rand, y_rand):
                     dot.set_color(GREEN)
                     batch_under_surface += 1
@@ -587,22 +546,166 @@ class MonteCarloIntegration3D(ThreeDScene):
 
                 new_dots.add(dot)
 
-            # Update the count of points under the surface
             under_surface_points += batch_under_surface
-            # Estimate the integral value (volume)
-            volume_estimate = (under_surface_points / (batch_size * n_points)) * integral_area
+            volume_estimate = (under_surface_points / (i + batch_size)) * integral_area
 
-            # Update the text with the new estimate
-            new_estimate_text = MathTex(r"Volume \approx " + f"{volume_estimate:.4f}")
-            #new_estimate_text.next_to(estimate_text, DOWN)
+            # Display limited dots and text updates only every few batches
+            if i % (batch_size * 2) == 0:
+                self.play(FadeOut(dot_group))  # Clear previous dots
+                dot_group = new_dots
+                self.play(Create(dot_group), run_time=0.5)
 
-            # Update the dots and estimate text
-            self.play(
-                Create(new_dots),
-                #Transform(estimate_text, new_estimate_text),
-                run_time=1,
-                lag_ratio=0.9
-            )
-
-        # Wait before finishing
         self.wait(2)
+        
+class PseudoRandomNumberGeneration(Scene):
+    def construct(self):
+        # Title of the scene
+        title = Text("Pseudo-Random Number Generation in Computers").scale(0.8)
+        title.move_to(ORIGIN)
+        self.play(Write(title), run_time=3, lag_ratio=0.9)
+        self.wait(2)
+        self.play(title.animate.shift(3 * UP).scale(0.6))
+
+        # Introduction to randomness and determinism
+        #self.play(FadeOut(title))
+        intro_text = Text(
+            "True randomness is unpredictable.\nComputers, however, are deterministic."
+        ).scale(0.6)
+        intro_text.move_to(ORIGIN)
+        self.play(Write(intro_text), run_time=4, lag_ratio=0.9)
+        self.wait(2)
+        #self.play(intro_text.animate.shift(2 * UP).scale(0.8))
+
+        # Fade out intro_text and show Determinism definition
+        self.play(FadeOut(intro_text))
+        determinism_text = Text(
+            "Determinism: The same inputs produce\n the same outputs every time."
+        ).scale(0.5)
+        determinism_text.move_to(ORIGIN)
+        self.play(Write(determinism_text), run_time=4, lag_ratio=0.9)
+        self.wait(2)
+
+        # Fade out determinism_text and introduce Pseudo-Random Numbers
+        self.play(FadeOut(determinism_text))
+        pseudo_random_text = Text(
+            "To simulate randomness, computers use\npseudo-random number generators (PRNGs)."
+        ).scale(0.6)
+        pseudo_random_text.move_to(ORIGIN)
+        self.play(Write(pseudo_random_text), run_time=4, lag_ratio=0.9)
+        self.wait(2)
+
+        # Fade out pseudo_random_text and present the LCG Algorithm
+        self.play(FadeOut(pseudo_random_text))
+        lcg_title = Text("Example PRNG: Linear Congruential Generator (LCG)").scale(0.6)
+        lcg_title.move_to(ORIGIN)
+        self.play(Write(lcg_title), run_time=4, lag_ratio=0.9)
+        self.wait(1)
+
+        # LCG Formula
+        self.play(FadeOut(lcg_title))
+        lcg_formula = MathTex("X_{n+1} = (a X_n + c) \\mod m").scale(0.8)
+        lcg_formula.move_to(ORIGIN)
+        self.play(Write(lcg_formula), run_time=3, lag_ratio=0.9)
+        self.wait(2)
+
+        # Explanation of each component in the formula
+        self.play(FadeOut(lcg_formula))
+        formula_explanation = Text(
+            "Where:\n- 'a' is the multiplier\n- 'c' is the increment\n- 'm' is the modulus\n- 'X_n' is the previous number in the sequence"
+        ).scale(0.5)
+        formula_explanation.move_to(ORIGIN)
+        self.play(Write(formula_explanation), run_time=2, lag_ratio=0.9)
+        self.wait(2)
+
+        # Fade out formula_explanation and show an example with specific values
+        self.play(FadeOut(formula_explanation))
+        specific_values = MathTex("X_{n+1} = (5 X_n + 1) \\mod 16", 
+                                  #tex_to_color_map={"5": YELLOW, "1": YELLOW, "16": YELLOW}
+                                  ).scale(0.8)
+        specific_values.move_to(ORIGIN)
+        self.play(Write(specific_values), run_time=2, lag_ratio=0.9)
+        self.wait(2)
+
+        # Fade out LCG formula and specific_values to introduce the seed and sequence
+        self.play(FadeOut(specific_values))
+        seed_text = Text("Starting with an initial seed: X_0 = 7").scale(0.6)
+        seed_text.move_to(ORIGIN)
+        self.play(Write(seed_text), run_time=2, lag_ratio=0.9)
+        self.wait(2)
+
+        # Generate and display a sequence
+        self.play(FadeOut(seed_text))
+        sequence_title = Text("Pseudo-Random Sequence Generated by LCG").scale(0.6)
+        sequence_title.move_to(ORIGIN)
+        self.play(Write(sequence_title), run_time=2, lag_ratio=0.9)
+
+
+        # Show a sequence of values calculated using the formula
+        seed = 7
+        multiplier = 5
+        increment = 1
+        modulus = 16
+        sequence_values = [seed]
+
+        for _ in range(10):
+            next_value = (multiplier * sequence_values[-1] + increment) % modulus
+            sequence_values.append(next_value)
+
+        # Generate a list of MathTex objects with random colors
+        sequence_text = VGroup(
+            *[MathTex(str(value), color=random.choice([RED, GREEN, BLUE, YELLOW, ORANGE, PURPLE, PINK])).scale(0.8) 
+              for value in sequence_values]
+        ).arrange(RIGHT, buff=0.5)
+        sequence_text.next_to(sequence_title, DOWN)
+
+        # Display each value in sequence_text with a random color
+        for value in sequence_text:
+            self.play(Write(value), run_time=0.6, lag_ratio=0.9)
+        self.wait(2)
+
+
+        # Explain the predictability of pseudo-random numbers
+        self.play(FadeOut(sequence_text, sequence_title), run_time=1)
+        predictability_text = Text(
+            "The sequence appears random,\nbut it is deterministic and repeatable."
+        ).scale(0.5)
+        predictability_text.move_to(ORIGIN)
+        self.play(Write(predictability_text), run_time=4, lag_ratio=0.9)
+        self.wait(3)
+
+        # Fade out predictability and introduce limitations
+        self.play(FadeOut(predictability_text))
+        limitations_text = Text(
+            "Limitations of PRNGs:\n  Sequences are predictable if the seed is known.\n"
+            " They eventually repeat (limited by the modulus 'm')."
+        ).scale(0.5)
+        limitations_text.move_to(ORIGIN)
+        self.play(Write(limitations_text), run_time=4, lag_ratio=0.9)
+        self.wait(3)
+
+        # Fade out limitations and compare with true randomness
+        self.play(FadeOut(limitations_text))
+        true_random_text = Text(
+            "True randomness lacks any predictable pattern.\n"
+            "It can be generated using physical processes (e.g., radioactive decay)."
+        ).scale(0.5)
+        true_random_text.move_to(ORIGIN)
+        self.play(Write(true_random_text), run_time=4, lag_ratio=0.9)
+        self.wait(3)
+
+        # Fade out true_random_text and conclude
+        self.play(FadeOut(true_random_text))
+        conclusion_text = Text(
+            "Pseudo-Random Numbers are sufficient for many tasks,\nbut unsuitable for applications requiring true unpredictability (e.g., cryptography)."
+        ).scale(0.6)
+        conclusion_text.move_to(ORIGIN)
+        self.play(Write(conclusion_text), run_time=4, lag_ratio=0.9)
+        self.wait(3)
+
+        # End scene
+        self.play(FadeOut(VGroup(title, conclusion_text)), run_time=2)
+        self.wait(2)
+        
+class Introduction(Scene):
+    def construct(self):
+        pass
