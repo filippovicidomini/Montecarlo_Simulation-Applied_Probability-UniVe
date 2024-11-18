@@ -706,6 +706,37 @@ class PseudoRandomNumberGeneration(Scene):
         self.play(FadeOut(VGroup(title, conclusion_text)), run_time=2)
         self.wait(2)
         
-class Introduction(Scene):
+from manim import *
+
+class MonteCarloIntroScene(Scene):
     def construct(self):
-        pass
+        # Define the continuous flow with sine and cosine for a hypnotic effect
+        func = lambda pos: (np.sin(pos[0]) * UR + np.cos(pos[1]) * LEFT + pos / 0.5)*10
+        stream_lines = StreamLines(
+            func,
+            stroke_width=2,
+            dt=0.1,
+            max_anchors_per_line=100,
+            opacity=0.5,
+            #color_by_magnitude=True
+        ).rotate(PI / 2).scale(2)
+
+        # Add and start the continuous flow animation
+        self.add(stream_lines)
+        stream_lines.start_animation(warm_up=True, flow_speed=1.5)
+        
+        # Overlay title and subtitle text for the Monte Carlo simulation introduction
+        title_text = Text("Monte Carlo Simulation", font_size=64, color=YELLOW)
+        title_text.move_to(ORIGIN)
+        subtitle_text = Text("Exploring Probability with Randomness", font_size=36, color=WHITE)
+        subtitle_text.next_to(title_text, DOWN)
+        
+        # Fade in the title and subtitle
+        self.play(FadeIn(title_text), FadeIn(subtitle_text), run_time=10, lag_ratio=0.9)
+        self.wait(4)
+
+        # Keep the streamlines flowing for a while to give a hypnotic effect
+        self.wait(6)
+
+        # Fade out everything to end the scene
+        self.play(FadeOut(VGroup(stream_lines, title_text, subtitle_text)), run_time=2)
