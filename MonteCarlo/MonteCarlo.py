@@ -705,17 +705,15 @@ class PseudoRandomNumberGeneration(Scene):
         # End scene
         self.play(FadeOut(VGroup(title, conclusion_text)), run_time=2)
         self.wait(2)
-        
-from manim import *
 
 class MonteCarloIntroScene(Scene):
     def construct(self):
         # Define the continuous flow with sine and cosine for a hypnotic effect
-        func = lambda pos: (np.sin(pos[0]) * UR + np.cos(pos[1]) * LEFT + pos / 0.5)*10
+        func = lambda pos: (np.sin(pos[0]) * UR + np.cos(pos[1]) * LEFT + pos / 0.1)
         stream_lines = StreamLines(
             func,
-            stroke_width=2,
-            dt=0.1,
+            stroke_width=5,
+            dt=.01,
             max_anchors_per_line=100,
             opacity=0.5,
             #color_by_magnitude=True
