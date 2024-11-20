@@ -741,5 +741,3 @@ class MonteCarloIntroScene(Scene):
         self.play(FadeOut(VGroup(stream_lines, title_text, subtitle_text)), run_time=2)
         
         
-        
-        
