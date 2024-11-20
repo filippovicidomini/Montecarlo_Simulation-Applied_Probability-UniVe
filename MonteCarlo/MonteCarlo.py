@@ -21,6 +21,7 @@ from manim import *
 
 class FinalVideo(Scene): # HERE PUT ALL THE SCENE TOGETHER calling scene.construct(self)
     def construct(self):
+        self.wait
         PseudoRandomNumberGeneration.construct(self)
         self.wait(2)
         PiEstimation.construct(self)
@@ -738,3 +739,7 @@ class MonteCarloIntroScene(Scene):
 
         # Fade out everything to end the scene
         self.play(FadeOut(VGroup(stream_lines, title_text, subtitle_text)), run_time=2)
+        
+        
+        
+        
