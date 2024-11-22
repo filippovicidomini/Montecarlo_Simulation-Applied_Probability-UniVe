@@ -361,7 +361,7 @@ class PythonCodeScene(Scene): # DONE
     # https://stackoverflow.com/questions/76197478/how-do-i-highlight-one-line-of-code-in-manim
     def construct(self):
         # Codice Python da visualizzare
-        code = '''from random import random, sqrt\nimport numpy as np\n
+        code = '''from random import random, sqrt\n
         
 def monte_carlo_pi(n):
     #in this function we calculate the value 
@@ -741,3 +741,103 @@ class MonteCarloIntroScene(Scene):
         self.play(FadeOut(VGroup(stream_lines, title_text, subtitle_text)), run_time=2)
         
         
+from manim import *
+class MonteCarloWithCode(Scene):
+    def construct(self):
+        # Python code to display
+        code = '''from random import random, sqrt
+
+# Generate a random point
+x, y = random(), random()
+
+# Calculate the distance from the origin
+distance = sqrt(x**2 + y**2)
+
+# Check if the point is inside the circle
+if distance <= 1:
+    inside_circle += 1
+    
+return (inside_circle / n) * 4
+        '''
+
+        # Create the code object
+        python_code = Code(
+            code=code,
+            tab_width=2,
+            language="Python",
+            font_size=24,
+            style="monokai",
+            insert_line_no=False,
+        )
+        python_code.to_edge(LEFT)  # Position the code on the left
+
+        # Create geometric objects for the animation
+        square = Square(side_length=4, color=XKCD.BABYPURPLE).shift(RIGHT * 4.5)
+        circle = Circle(radius=2, color=XKCD.AZUL, fill_opacity=0.5).move_to(square.get_center())
+
+        # Text to display results
+        distance_text = Text("Distance: ?", font_size=24).next_to(circle, UP*1.5, buff=0.5)
+        inside_text = Text("Inside Circle: ?", font_size=24).next_to(distance_text, DOWN)
+
+        # Display the initial scene
+        self.play(Write(python_code), Create(square), Create(circle), Write(distance_text), Write(inside_text))
+        self.wait(1)
+
+        # Highlight the random point generation line
+        highlight_gen_point = SurroundingRectangle(python_code.code[2], color=YELLOW, buff=0.1)  # Line 3
+        self.play(Create(highlight_gen_point))
+        self.wait(1)
+        self.play(FadeOut(highlight_gen_point))
+
+        # Generate random numbers (step-by-step visualization)
+        x = -0.8
+        y = 0.7
+
+        # Highlight random() for x-coordinate generation
+        random_highlight_x = SurroundingRectangle(python_code.code[3][:28], color=GREEN, buff=0.1)  # random()
+        self.play(Create(random_highlight_x))
+        #x_text = Text(f"x = {x:.2f}", font_size=24).next_to(square, UP, buff=0.5)
+        #self.play(Write(x_text))
+        self.wait(1)
+        self.play(FadeOut(random_highlight_x))
+
+        
+
+        # Display the generated point on the square
+        new_point = Dot(point=[x, y, 0], color=WHITE).shift(RIGHT * 4.5)
+        self.play(FadeIn(new_point), run_time=1)
+        self.wait(1)
+
+        highlight_if_condition = SurroundingRectangle(python_code.code[6][:28], color=YELLOW, buff=0.1)  # If condition
+        self.play(Create(highlight_if_condition))
+        self.wait(1)
+        arrow = Arrow(circle.get_center(), end=new_point.get_center(), buff=0.1, color=WHITE, stroke_width=3)
+        self.play(Create(arrow))
+        self.play(FadeOut(highlight_if_condition))
+        # Highlight the distance calculation line
+        highlight_dist = SurroundingRectangle(python_code.code[9:10][:20], color=YELLOW, buff=0.1)  # Distance calculation line
+        self.play(Create(highlight_dist))
+        self.wait(1)
+        self.play(FadeOut(highlight_dist))
+        distance = np.sqrt(x**2 + y**2)
+        
+        new_distance_text = Text(f"Distance: {distance:.2f}", font_size=24).next_to(circle, UP*1.5, buff=0.5)
+        self.play(Transform(distance_text, new_distance_text))
+        
+        self.wait(1)
+
+        # Highlight the if condition line
+        
+        if distance <= 2:
+            inside_text_new = Text("Inside Circle: Yes", font_size=24, color=GREEN).next_to(distance_text, DOWN)
+            self.play(new_point.animate.set_color(GREEN))
+        else:
+            inside_text_new = Text("Inside Circle: No", font_size=24, color=RED).next_to(distance_text, DOWN)
+            self.play(new_point.animate.set_color(RED))
+        self.play(Transform(inside_text, inside_text_new))
+        self.wait(1)
+
+        # Clean up
+        self.play(
+                  FadeOut(python_code), FadeOut(square), FadeOut(circle), FadeOut(new_point), 
+                  FadeOut(distance_text), FadeOut(inside_text), FadeOut(arrow))
