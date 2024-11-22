@@ -740,8 +740,6 @@ class MonteCarloIntroScene(Scene):
         # Fade out everything to end the scene
         self.play(FadeOut(VGroup(stream_lines, title_text, subtitle_text)), run_time=2)
         
-        
-from manim import *
 class MonteCarloWithCode(Scene):
     def construct(self):
         # Python code to display
@@ -841,3 +839,6 @@ return (inside_circle / n) * 4
         self.play(
                   FadeOut(python_code), FadeOut(square), FadeOut(circle), FadeOut(new_point), 
                   FadeOut(distance_text), FadeOut(inside_text), FadeOut(arrow))
+        
+        
+        
