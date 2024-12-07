@@ -1,5 +1,5 @@
 # This file is used internally by FFMPEG.
-file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/MonteCarloIntroScene/3977891868_2169721998_1156495407.mp4'
-file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/MonteCarloIntroScene/2456164073_1529476500_866826825.mp4'
-file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/MonteCarloIntroScene/2456164073_3553769054_4092279908.mp4'
-file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/MonteCarloIntroScene/2456164073_2154961170_379131979.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/MonteCarloIntroScene/3977891868_215387513_843868072.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/MonteCarloIntroScene/3179487650_1292387967_183536626.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/MonteCarloIntroScene/3179487650_3402914649_52715175.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/MonteCarloIntroScene/3179487650_2886925468_379131979.mp4'

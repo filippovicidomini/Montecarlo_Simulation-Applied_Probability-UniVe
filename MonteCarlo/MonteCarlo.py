@@ -343,10 +343,10 @@ class Credits(Scene): # da sistemare
         self.play(Write(created_by_text))
         
         # Display the names in a list at the center
-        names = ["Filippo Vicidomini", "Nome 2", "Nome 3", "Nome 4"]
+        names = ["Filippo Vicidomini", "Damiano Bacchin", "Nina Marlis Duerfeld", "Federico Segala", "Giacomo Scocca"]
         names_text = VGroup(*[Text(name, font_size=40) for name in names])
         names_text.arrange(DOWN, center=True)
-        self.play(Write(names_text, shift=UP), run_time=10)
+        self.play(Write(names_text, shift=UP), run_time=20)
 
         # Display "University Ca' Foscari of Venice" at the bottom
         university_text = Text("University Ca' Foscari of Venice", font_size=36)
@@ -355,7 +355,7 @@ class Credits(Scene): # da sistemare
 
         # Fade out all elements
         self.wait(5)
-        self.play(FadeOut(created_by_text), FadeOut(names_text), FadeOut(university_text), run_time=2)
+        self.play(FadeOut(created_by_text), FadeOut(names_text), FadeOut(university_text), run_time=5)
 
 class PythonCodeScene(Scene): # DONE 
     # https://stackoverflow.com/questions/76197478/how-do-i-highlight-one-line-of-code-in-manim
@@ -563,7 +563,7 @@ class PseudoRandomNumberGeneration(Scene):
         # Title of the scene
         title = Text("Pseudo-Random Number Generation in Computers").scale(0.8)
         title.move_to(ORIGIN)
-        self.play(Write(title), run_time=3, lag_ratio=0.9)
+        self.play(Write(title), run_time=5, lag_ratio=0.9)
         self.wait(2)
         self.play(title.animate.shift(3 * UP).scale(0.6))
 
@@ -573,7 +573,7 @@ class PseudoRandomNumberGeneration(Scene):
             "True randomness is unpredictable.\nComputers, however, are deterministic."
         ).scale(0.6)
         intro_text.move_to(ORIGIN)
-        self.play(Write(intro_text), run_time=4, lag_ratio=0.9)
+        self.play(Write(intro_text), run_time=5, lag_ratio=0.9)
         self.wait(2)
         #self.play(intro_text.animate.shift(2 * UP).scale(0.8))
 
@@ -583,7 +583,7 @@ class PseudoRandomNumberGeneration(Scene):
             "Determinism: The same inputs produce\n the same outputs every time."
         ).scale(0.5)
         determinism_text.move_to(ORIGIN)
-        self.play(Write(determinism_text), run_time=4, lag_ratio=0.9)
+        self.play(Write(determinism_text), run_time=6, lag_ratio=0.9)
         self.wait(2)
 
         # Fade out determinism_text and introduce Pseudo-Random Numbers
@@ -592,21 +592,21 @@ class PseudoRandomNumberGeneration(Scene):
             "To simulate randomness, computers use\npseudo-random number generators (PRNGs)."
         ).scale(0.6)
         pseudo_random_text.move_to(ORIGIN)
-        self.play(Write(pseudo_random_text), run_time=4, lag_ratio=0.9)
+        self.play(Write(pseudo_random_text), run_time=6, lag_ratio=0.9)
         self.wait(2)
 
         # Fade out pseudo_random_text and present the LCG Algorithm
         self.play(FadeOut(pseudo_random_text))
         lcg_title = Text("Example PRNG: Linear Congruential Generator (LCG)").scale(0.6)
         lcg_title.move_to(ORIGIN)
-        self.play(Write(lcg_title), run_time=4, lag_ratio=0.9)
+        self.play(Write(lcg_title), run_time=6, lag_ratio=0.9)
         self.wait(1)
 
         # LCG Formula
         self.play(FadeOut(lcg_title))
         lcg_formula = MathTex("X_{n+1} = (a X_n + c) \\mod m").scale(0.8)
         lcg_formula.move_to(ORIGIN)
-        self.play(Write(lcg_formula), run_time=3, lag_ratio=0.9)
+        self.play(Write(lcg_formula), run_time=5, lag_ratio=0.9)
         self.wait(2)
 
         # Explanation of each component in the formula
@@ -615,7 +615,7 @@ class PseudoRandomNumberGeneration(Scene):
             "Where:\n- 'a' is the multiplier\n- 'c' is the increment\n- 'm' is the modulus\n- 'X_n' is the previous number in the sequence"
         ).scale(0.5)
         formula_explanation.move_to(ORIGIN)
-        self.play(Write(formula_explanation), run_time=2, lag_ratio=0.9)
+        self.play(Write(formula_explanation), run_time=5, lag_ratio=0.9)
         self.wait(2)
 
         # Fade out formula_explanation and show an example with specific values
@@ -624,21 +624,24 @@ class PseudoRandomNumberGeneration(Scene):
                                   #tex_to_color_map={"5": YELLOW, "1": YELLOW, "16": YELLOW}
                                   ).scale(0.8)
         specific_values.move_to(ORIGIN)
-        self.play(Write(specific_values), run_time=2, lag_ratio=0.9)
+        self.play(Write(specific_values), run_time=4, lag_ratio=0.9)
         self.wait(2)
 
         # Fade out LCG formula and specific_values to introduce the seed and sequence
         self.play(FadeOut(specific_values))
-        seed_text = Text("Starting with an initial seed: X_0 = 7").scale(0.6)
+        seed_text = Text("Starting with an initial seed: ").scale(0.6)
+        seed_start = MathTex("X_0 = 7", color=YELLOW).scale(0.6)
         seed_text.move_to(ORIGIN)
-        self.play(Write(seed_text), run_time=2, lag_ratio=0.9)
+        seed_start.next_to(seed_text, RIGHT)
+        self.play(Write(seed_text), run_time=4, lag_ratio=0.9)
+        self.play(Write(seed_start), run_time=1)
         self.wait(2)
 
         # Generate and display a sequence
-        self.play(FadeOut(seed_text))
+        self.play(FadeOut(seed_text), FadeOut(seed_start))
         sequence_title = Text("Pseudo-Random Sequence Generated by LCG").scale(0.6)
         sequence_title.move_to(ORIGIN)
-        self.play(Write(sequence_title), run_time=2, lag_ratio=0.9)
+        self.play(Write(sequence_title), run_time=4, lag_ratio=0.9)
 
 
         # Show a sequence of values calculated using the formula
@@ -661,7 +664,7 @@ class PseudoRandomNumberGeneration(Scene):
 
         # Display each value in sequence_text with a random color
         for value in sequence_text:
-            self.play(Write(value), run_time=0.6, lag_ratio=0.9)
+            self.play(Write(value), run_time=1, lag_ratio=0.9)
         self.wait(2)
 
 
@@ -671,7 +674,7 @@ class PseudoRandomNumberGeneration(Scene):
             "The sequence appears random,\nbut it is deterministic and repeatable."
         ).scale(0.5)
         predictability_text.move_to(ORIGIN)
-        self.play(Write(predictability_text), run_time=4, lag_ratio=0.9)
+        self.play(Write(predictability_text), run_time=5, lag_ratio=0.9)
         self.wait(3)
 
         # Fade out predictability and introduce limitations
@@ -681,7 +684,7 @@ class PseudoRandomNumberGeneration(Scene):
             " They eventually repeat (limited by the modulus 'm')."
         ).scale(0.5)
         limitations_text.move_to(ORIGIN)
-        self.play(Write(limitations_text), run_time=4, lag_ratio=0.9)
+        self.play(Write(limitations_text), run_time=5, lag_ratio=0.9)
         self.wait(3)
 
         # Fade out limitations and compare with true randomness
@@ -691,7 +694,7 @@ class PseudoRandomNumberGeneration(Scene):
             "It can be generated using physical processes (e.g., radioactive decay)."
         ).scale(0.5)
         true_random_text.move_to(ORIGIN)
-        self.play(Write(true_random_text), run_time=4, lag_ratio=0.9)
+        self.play(Write(true_random_text), run_time=5, lag_ratio=0.9)
         self.wait(3)
 
         # Fade out true_random_text and conclude
@@ -700,11 +703,11 @@ class PseudoRandomNumberGeneration(Scene):
             "Pseudo-Random Numbers are sufficient for many tasks,\nbut unsuitable for applications requiring true unpredictability (e.g., cryptography)."
         ).scale(0.6)
         conclusion_text.move_to(ORIGIN)
-        self.play(Write(conclusion_text), run_time=4, lag_ratio=0.9)
+        self.play(Write(conclusion_text), run_time=5, lag_ratio=0.9)
         self.wait(3)
 
         # End scene
-        self.play(FadeOut(VGroup(title, conclusion_text)), run_time=2)
+        self.play(FadeOut(VGroup(title, conclusion_text)), run_time=5)
         self.wait(2)
 
 class MonteCarloIntroScene(Scene):
@@ -731,14 +734,14 @@ class MonteCarloIntroScene(Scene):
         subtitle_text.next_to(title_text, DOWN)
         
         # Fade in the title and subtitle
-        self.play(FadeIn(title_text), FadeIn(subtitle_text), run_time=10, lag_ratio=0.9)
-        self.wait(4)
+        self.play(FadeIn(title_text), FadeIn(subtitle_text), run_time=25, lag_ratio=0.9)
+        self.wait(5)
 
         # Keep the streamlines flowing for a while to give a hypnotic effect
-        self.wait(6)
+        self.wait(5)
 
         # Fade out everything to end the scene
-        self.play(FadeOut(VGroup(stream_lines, title_text, subtitle_text)), run_time=2)
+        self.play(FadeOut(VGroup(stream_lines, title_text, subtitle_text)), run_time=10)
         
 class MonteCarloWithCode(Scene):
     def construct(self):
@@ -841,4 +844,86 @@ return (inside_circle / n) * 4
                   FadeOut(distance_text), FadeOut(inside_text), FadeOut(arrow))
         
         
+class UniformToGaussian(Scene):
+    def construct(self):
+        # Create title
+        title = Text("Law of Large Numbers").move_to(ORIGIN)
+        self.play(Write(title), run_time=3, lag_ratio=0.9)
+        self.wait(2)
         
+        # move up 
+        self.play(title.animate.shift(3 * UP).scale(0.8), run_time=2)
+        
+
+        # Create Cartesian plane
+        axes = Axes(
+            x_range=[0, 2 * np.pi, np.pi / 2],
+            y_range=[0, 1.5, 0.5],
+            tips=False,
+            axis_config={"include_numbers": False},
+        ).scale(0.8)
+        x_label = axes.get_axis_labels(x_label="x", y_label="f(x)")
+        self.play(Create(axes), Write(x_label), run_time=4, lag_ratio=0.9)
+
+        # Define flat curve (Uniform Distribution)
+        flat_curve = axes.plot(
+            lambda x: 0.4,
+            x_range=[0, 2 * np.pi],
+            color=BLUE,
+        )
+        #flat_label = MathTex("f(x) = 0.5").next_to(flat_curve, UP)
+        self.play(Create(flat_curve), run_time=5, lag_ratio=0.9)
+
+        # Transform flat curve into a Gaussian
+        gaussian_curve = axes.plot(
+            lambda x: np.exp(-((x - np.pi) ** 2) / (2 * 0.3**2)) / (np.sqrt(2 * np.pi) * 0.3),
+            x_range=[0, 2 * np.pi],
+            color=RED,
+        )
+        gaussian_label = MathTex(r"f(x) = \frac{1}{\sqrt{2\pi \sigma^2}} e^{-\frac{(x-\pi)^2}{2\sigma^2}}").move_to(ORIGIN + RIGHT*3).scale(0.6)
+
+        # Animate transformation
+        self.play(Transform(flat_curve, gaussian_curve), Write(gaussian_label), run_time=5, lag_ratio=0.9)
+        
+        # Hold the final scene
+        self.wait(4)
+        
+        # Clean up
+        self.play(FadeOut(axes), FadeOut(x_label), FadeOut(flat_curve), FadeOut(gaussian_curve), FadeOut(gaussian_label))
+        
+        
+class PRNLimitations(Scene):
+    def construct(self):
+        # Title
+        title = Text("Limitations of PRN", font_size=48)
+        title.move_to(ORIGIN)
+        self.play(Write(title), run_time=2, lag_ratio=0.9)
+
+        self.wait(2)
+        
+        #clean up
+        self.play(FadeOut(title), run_time=2, lag_ratio=0.9)
+
+
+class introToIntegration(Scene):
+    def construct(self):
+        # Title
+        title = Text("Monte Carlo Integration", font_size=48, color=BLUE)
+        self.play(Write(title))
+        self.wait(1)
+
+        # Move title upwards
+        self.play(title.animate.to_edge(UP))
+        self.wait(0.5)
+
+        # Formula for integral
+        integral_formula = MathTex(
+            r"\int_a^b f(x) \, dx ",
+            font_size=36
+        )
+        # TO THE CENTER
+        integral_formula.move_to(ORIGIN)
+        self.play(Write(integral_formula))
+        
+        # Hold final frame
+        self.wait(2)

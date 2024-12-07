@@ -1,0 +1,9 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/UniformToGaussian/3977891868_925111534_223132457.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/UniformToGaussian/2852726489_1141282389_340474049.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/UniformToGaussian/2852726489_3580882950_2939105307.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/UniformToGaussian/2852726489_500011016_2221360997.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/UniformToGaussian/2852726489_463342890_3780216411.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/UniformToGaussian/2852726489_3945728419_2810323155.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/UniformToGaussian/2852726489_3636024140_1431969638.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/UniformToGaussian/2852726489_3023199386_675980006.mp4'
