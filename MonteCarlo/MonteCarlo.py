@@ -927,3 +927,49 @@ class introToIntegration(Scene):
         
         # Hold final frame
         self.wait(2)
+        
+class Conclusion(Scene):
+    def construct(self):
+        title = Text("Conclusions", font_size=56, color=BLUE)
+        self.play(Write(title), run_time=4, lag_ratio=0.9)
+        self.wait(4)
+        self.play(FadeOut(title), run_time=2, lag_ratio=0.9)
+        
+
+
+class KeywordsAnimation(Scene):
+    def construct(self):
+        # Keywords
+        keywords = [
+            "Uncertainty",
+            "Complexity",
+            "Applications",
+            "Randomness",
+            "Probability Distribution",
+            "Approximation",
+            "π",
+            "Integrals",
+        ]
+
+        # Positions for keywords on the screen
+        positions = [
+            LEFT * 3 + UP*2,  # Top left
+            RIGHT * 3 + UP*2, # Top right
+            LEFT * 3+UP*0.8,       # Middle left
+            RIGHT * 3+UP*0.8,      # Middle right
+            LEFT * 3 + DOWN,# Bottom left
+            RIGHT * 3 + DOWN,# Bottom right
+            DOWN * 2,       # Bottom center
+            ORIGIN,         # Center
+        ]
+
+        # Animate each keyword
+        for keyword, position in zip(keywords, positions):
+            text = Text(keyword, font_size=36, color=WHITE)
+            self.play(Write(text))
+            self.wait(2)
+            self.play(text.animate.move_to(position), run_time=6, lagratio=0.9)
+            self.wait(2)
+
+        # Final hold for all keywords
+        self.wait(2)

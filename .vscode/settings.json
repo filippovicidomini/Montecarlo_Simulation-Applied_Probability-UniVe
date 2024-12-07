@@ -3,5 +3,5 @@
     "minimap.background": "#00000000",
     "scrollbar.shadow": "#00000000"
   },
-  "editor.minimap.autohide": true
+  "editor.minimap.autohide": false
 }

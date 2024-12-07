@@ -1,0 +1,4 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/Conclusion/3977891868_4107038445_223132457.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/Conclusion/2852726489_3636024140_1294505660.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/MonteCarlo/1080p60/partial_movie_files/Conclusion/2852726489_2088507386_1025125219.mp4'
