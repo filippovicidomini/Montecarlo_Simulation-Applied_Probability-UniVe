@@ -928,6 +928,7 @@ class introToIntegration(Scene):
         # Hold final frame
         self.wait(2)
         
+        
 class Conclusion(Scene):
     def construct(self):
         title = Text("Conclusions", font_size=56, color=BLUE)
