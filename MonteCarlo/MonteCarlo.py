@@ -939,37 +939,64 @@ class Conclusion(Scene):
 
 class KeywordsAnimation(Scene):
     def construct(self):
-        # Keywords
-        keywords = [
-            "Uncertainty",
-            "Complexity",
-            "Applications",
-            "Randomness",
-            "Probability Distribution",
-            "Approximation",
-            "π",
-            "Integrals",
-        ]
-
-        # Positions for keywords on the screen
-        positions = [
-            LEFT * 3 + UP*2,  # Top left
-            RIGHT * 3 + UP*2, # Top right
-            LEFT * 3+UP*0.8,       # Middle left
-            RIGHT * 3+UP*0.8,      # Middle right
-            LEFT * 3 + DOWN,# Bottom left
-            RIGHT * 3 + DOWN,# Bottom right
-            DOWN * 2,       # Bottom center
-            ORIGIN,         # Center
-        ]
-
-        # Animate each keyword
-        for keyword, position in zip(keywords, positions):
-            text = Text(keyword, font_size=36, color=WHITE)
-            self.play(Write(text))
-            self.wait(2)
-            self.play(text.animate.move_to(position), run_time=6, lagratio=0.9)
-            self.wait(2)
-
-        # Final hold for all keywords
+        
+        title = Text("MonteCarlo Simulations", font_size=48, color=BLUE)
+        self.play(Write(title), run_time=2, lag_ratio=0.9)
         self.wait(2)
+        self.play(title.animate.to_edge(UP).scale(0.8), run_time=2)
+        self.wait(1)
+        
+        color = [RED, GREEN, BLUE, YELLOW, ORANGE, PURPLE, PINK, TEAL, GOLD, MAROON, TEAL_E, RED_D, PURE_GREEN, LIGHT_PINK, LIGHT_BROWN, GREEN_E,
+                 DARK_BLUE, DARK_BROWN]
+        
+        keywords1 = ["Principles", "Applications", "Code Examples"]
+        
+        keywords_text1 = VGroup(
+            *[Text(text, font_size=36, color=random.choice(color)) for text in keywords1]
+        ).arrange(DOWN, buff=0.5)
+        keywords_text1.move_to(ORIGIN)
+        self.play(Write(keywords_text1), run_time=5, lag_ratio=0.9)
+        
+        self.wait(2)
+        
+        self.play(FadeOut(keywords_text1), FadeOut(title), run_time=2)
+        
+        title = Text("Applications", font_size=48, color=BLUE)
+        keywords2 = ["Estimation of π ", "Integration in multiple dimentions"]
+        
+        self.play(Write(title), run_time=3, lag_ratio=0.9)
+        self.wait(2)
+        self.play(title.animate.to_edge(UP).scale(0.8), run_time=2)
+        self.wait(1)
+        
+        keywords_text2 = VGroup(
+            *[Text(text, font_size=36, color=random.choice(color)) for text in keywords2]
+        ).arrange(DOWN, buff=0.5)
+        keywords_text2.move_to(ORIGIN)
+        self.play(Write(keywords_text2), run_time=5, lag_ratio=0.9)
+        
+        self.wait(2)
+        
+        self.play(FadeOut(keywords_text2), FadeOut(title), run_time=2)
+        
+        title = Text("How it works", font_size=48, color=BLUE)
+        keywords3 = ["Random values + Probability Distribution Function", "Approximation of the real distribution", "Solution of complex problems"]
+        
+        self.play(Write(title), run_time=3, lag_ratio=0.9)
+        self.wait(2)
+        self.play(title.animate.to_edge(UP).scale(0.8), run_time=2)
+        self.wait(1)
+        
+        keywords_text3 = VGroup(
+            *[Text(text, font_size=36, color=random.choice(color)) for text in keywords3]
+        ).arrange(DOWN, buff=0.5)
+        keywords_text3.move_to(ORIGIN)
+        
+        self.play(Write(keywords_text3), run_time=15, lag_ratio=0.9)
+        
+        self.wait(2)
+        
+        self.play(FadeOut(keywords_text3), FadeOut(title), run_time=2)
+        
+        
+        
