@@ -1,0 +1,12 @@
+# This file is used internally by FFMPEG.
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/log/1080p60/partial_movie_files/LogarithmExample/3977891868_3558858817_223132457.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/log/1080p60/partial_movie_files/LogarithmExample/2852726489_3890345977_1754399140.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/log/1080p60/partial_movie_files/LogarithmExample/2852726489_726637229_3820217777.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/log/1080p60/partial_movie_files/LogarithmExample/2852726489_643800211_3820217777.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/log/1080p60/partial_movie_files/LogarithmExample/2852726489_3890345977_1321241817.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/log/1080p60/partial_movie_files/LogarithmExample/2852726489_2622407702_826145871.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/log/1080p60/partial_movie_files/LogarithmExample/2852726489_1141282389_1994906570.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/log/1080p60/partial_movie_files/LogarithmExample/2852726489_549720683_1849483869.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/log/1080p60/partial_movie_files/LogarithmExample/2852726489_2123866596_2946413697.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/log/1080p60/partial_movie_files/LogarithmExample/2852726489_4062712778_672193140.mp4'
+file 'file:/Users/filippovicidomini/Desktop/Montecarlo_Simulation-Applied_Probability-UniVe/MonteCarlo/media/videos/log/1080p60/partial_movie_files/LogarithmExample/2852726489_1141282389_317005501.mp4'
